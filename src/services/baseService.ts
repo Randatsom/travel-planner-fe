@@ -2,8 +2,7 @@ class BaseService {
   readonly baseUrl: string;
 
   constructor() {
-    // this.baseUrl = "https://travel-planner-be.onrender.com";
-    this.baseUrl = "http://localhost:4444/api"
+    this.baseUrl = import.meta.env.VITE_API_URL + '/api' || ''
   }
 
   protected getBaseUrl(url: string) {
