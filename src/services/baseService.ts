@@ -2,7 +2,7 @@ class BaseService {
   readonly baseUrl: string;
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_API_URL + '/api' || ''
+    this.baseUrl = import.meta.env.VITE_API_URL || ''
   }
 
   protected getBaseUrl(url: string) {
