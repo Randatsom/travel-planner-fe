@@ -1,15 +1,17 @@
-import { NotificationStatus } from 'core/slices/notification/types.js'
-import { NotificationTitleProps } from './types'
+import { NotificationTitleProps } from "./types";
+import { NotificationStatus } from "../../core/slices/notification/types";
 
 const getNotificationTitle = ({ status, title }: NotificationTitleProps) => {
   const defaultText =
-    status === NotificationStatus.Error ? 'Возникла ошибка' : 'Данные сохранены'
+    status === NotificationStatus.Error
+      ? "Возникла ошибка"
+      : "Данные сохранены";
 
   if (title) {
-    return title
+    return title;
   }
 
-  return defaultText
-}
+  return defaultText;
+};
 
-export default getNotificationTitle
+export default getNotificationTitle;

@@ -1,21 +1,21 @@
-import { AxiosError } from 'axios'
-import { store } from 'core/store'
-import { addNotification } from 'core/slices/notification/notificationSlice'
-import { NotificationStatus } from 'core/slices/notification/types'
+import { addNotification } from "./notificationSlice";
+import store from "../../store";
+import { NotificationStatus } from "./types";
+import { AxiosError } from "axios";
 
 const dispatchError = (error: AxiosError<Error>) => {
-  const text = error.response ? error.response.data.message : error.message
+  const text = error.response ? error.response.data.message : error.message;
 
   if (!text) {
-    return
+    return;
   }
 
   store.dispatch(
     addNotification({
       text,
       status: NotificationStatus.Error,
-    })
-  )
-}
+    }),
+  );
+};
 
-export default dispatchError
+export default dispatchError;

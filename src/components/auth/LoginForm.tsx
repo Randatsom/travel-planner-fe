@@ -8,6 +8,10 @@ import { authSchema } from "./utils";
 import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
 import { loginUser } from "../../core/slices/auth/authSlice";
 import { Link, useNavigate } from "react-router-dom";
+import { handleError } from "../../utils/errors";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { addNotification } from "../../core/slices/notification/notificationSlice";
+import { NotificationStatus } from "../../core/slices/notification/types";
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
@@ -22,10 +26,10 @@ const LoginForm = () => {
   const onSubmit = async (data: IAuth) => {
     try {
       const result = await dispatch(loginUser(data));
-      console.log(result);
+      unwrapResult(result);
       navigate(paths.HOME);
-    } catch (e) {
-      console.log("error", e);
+    } catch (error) {
+      handleError(error, dispatch);
     }
   };
 

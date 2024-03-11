@@ -1,46 +1,46 @@
-import React, { useEffect, useRef } from 'react'
-import { useSelector } from 'react-redux'
-import { Alert, Stack } from '@mui/material'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import { RootState } from 'core/types'
-import { removeNotification } from 'core/slices/notification/notificationSlice'
-import { NotificationStatus } from 'core/slices/notification/types'
-import { useAppDispatch } from 'utils/hooks/useAppDispatch'
-import NotificationTitle from './NotificationTitle'
-import NotificationText from './NotificationText'
+import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
+import { removeNotification } from "../../core/slices/notification/notificationSlice";
+import { useSelector } from "react-redux";
+import { useEffect, useRef } from "react";
+import { Alert, Stack } from "@mui/material";
+import NotificationText from "./NotificationText";
+import { NotificationStatus } from "../../core/slices/notification/types";
+import NotificationTitle from "./NotificationTitle";
+import { RootState } from "../../core/types";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
-const NOTIFICATION_TIMEOUT = 10000
+const NOTIFICATION_TIMEOUT = 10000;
 
 const Notification = () => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const notifications = useSelector(
-    (state: RootState) => state.notification.messages
-  )
-  const activeTimers = useRef(new Map())
+    (state: RootState) => state.notification.messages,
+  );
+  const activeTimers = useRef(new Map());
 
   useEffect(() => {
-    const currentTimers = activeTimers.current
+    const currentTimers = activeTimers.current;
 
     notifications.forEach((notification) => {
       if (!currentTimers.has(notification.id)) {
         const timer = setTimeout(() => {
-          dispatch(removeNotification(notification.id))
-        }, NOTIFICATION_TIMEOUT)
-        currentTimers.set(notification.id, timer)
+          dispatch(removeNotification(notification.id));
+        }, NOTIFICATION_TIMEOUT);
+        currentTimers.set(notification.id, timer);
       }
-    })
+    });
 
     return () => {
-      currentTimers.forEach((timer) => clearTimeout(timer))
-      currentTimers.clear()
-    }
-  }, [notifications, dispatch])
+      currentTimers.forEach((timer) => clearTimeout(timer));
+      currentTimers.clear();
+    };
+  }, [notifications, dispatch]);
 
   return (
     <Stack
       spacing={2}
       sx={{
-        position: 'fixed',
+        position: "fixed",
         bottom: 16,
         right: 16,
         zIndex: 1301, // mui dialog 1300
@@ -64,7 +64,7 @@ const Notification = () => {
         </Alert>
       ))}
     </Stack>
-  )
-}
+  );
+};
 
-export default Notification
+export default Notification;

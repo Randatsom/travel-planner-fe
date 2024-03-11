@@ -6,8 +6,12 @@ import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 import TextFieldController from "../forms/textField/TextFieldController";
 import { registrationSchema } from "./utils";
 import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
-import { loginUser, registerUser } from "../../core/slices/auth/authSlice";
+import { registerUser } from "../../core/slices/auth/authSlice";
 import { Link, useNavigate } from "react-router-dom";
+import { handleError } from "../../utils/errors";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { addNotification } from "../../core/slices/notification/notificationSlice";
+import { NotificationStatus } from "../../core/slices/notification/types";
 
 const RegisterForm = () => {
   const dispatch = useAppDispatch();
@@ -22,10 +26,10 @@ const RegisterForm = () => {
   const onSubmit = async (data: IAuth) => {
     try {
       const result = await dispatch(registerUser(data));
-      console.log(result);
+      unwrapResult(result);
       navigate(paths.HOME);
-    } catch (e) {
-      console.log("error", e);
+    } catch (error) {
+      handleError(error, dispatch);
     }
   };
 
