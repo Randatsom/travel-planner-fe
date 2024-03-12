@@ -12,10 +12,13 @@ import React from "react";
 import DrawerMenu from "../menu/DrawerMenu";
 import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
 import { logout } from "../../core/slices/auth/authSlice";
+import { useNavigate } from "react-router-dom";
+import paths from "../../routes/paths";
 
 const HeaderComponent = () => {
   const [open, setOpen] = React.useState(false);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -66,6 +69,14 @@ const HeaderComponent = () => {
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
           >
+            <MenuItem
+              onClick={() => {
+                navigate(paths.ACCOUNT);
+                handleMenuClose();
+              }}
+            >
+              Настройки аккаунта
+            </MenuItem>
             <MenuItem
               onClick={() => {
                 dispatch(logout());

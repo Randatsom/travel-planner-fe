@@ -11,6 +11,9 @@ import { checkAuth, logout } from "./core/slices/auth/authSlice";
 import { routes } from "./routes/routes";
 import paths from "./routes/paths";
 import "./App.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const App = () => {
   const isLoading = useSelector(selectIsUserLoading);
@@ -69,7 +72,9 @@ const App = () => {
                   />
                 ) : (
                   <Layout {...layoutProps}>
-                    <Component />
+                    <QueryClientProvider client={queryClient}>
+                      <Component />
+                    </QueryClientProvider>
                   </Layout>
                 )
               }

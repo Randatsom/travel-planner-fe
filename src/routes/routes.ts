@@ -6,6 +6,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import { protectRoutes } from "./utils";
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
+import AccountPage from "../pages/AccountPage";
 
 const authRoutes = [
   {
@@ -24,6 +25,12 @@ const protectedRoutes = protectRoutes([
   {
     path: paths.HOME,
     component: HomePage,
+    layout: AccountLayout,
+    layoutProps: { maxWidth: "xl" },
+  },
+  {
+    path: paths.ACCOUNT,
+    component: AccountPage,
     layout: AccountLayout,
     layoutProps: { maxWidth: "md" },
   },
