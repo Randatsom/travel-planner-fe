@@ -10,6 +10,8 @@ import { loginUser } from "../../core/slices/auth/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { handleError } from "../../utils/errors";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { addNotification } from "../../core/slices/notification/notificationSlice";
+import { NotificationStatus } from "../../core/slices/notification/types";
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
@@ -25,6 +27,12 @@ const LoginForm = () => {
     try {
       const result = await dispatch(loginUser(data));
       unwrapResult(result);
+      dispatch(
+        addNotification({
+          text: `Добро пожаловать, ${result.payload.username}!`,
+          status: NotificationStatus.Success,
+        }),
+      );
       navigate(paths.HOME);
     } catch (error) {
       handleError(error, dispatch);

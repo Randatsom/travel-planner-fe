@@ -27,6 +27,12 @@ const RegisterForm = () => {
     try {
       const result = await dispatch(registerUser(data));
       unwrapResult(result);
+      dispatch(
+        addNotification({
+          text: `Вы успешно зарегистрированы!`,
+          status: NotificationStatus.Success,
+        }),
+      );
       navigate(paths.HOME);
     } catch (error) {
       handleError(error, dispatch);
