@@ -9,6 +9,7 @@ const TextFieldController = <TFieldValues extends FieldValues>({
   helperText,
   readOnly = false,
   numericOnly = false,
+  multiline = false,
   ...otherProps
 }: TextFieldControllerProps<TFieldValues>) => {
   const handleBlurOnWheel: WheelEventHandler<HTMLDivElement> = useCallback(
@@ -43,6 +44,7 @@ const TextFieldController = <TFieldValues extends FieldValues>({
           error={!!fieldState.error}
           helperText={fieldState.error?.message ?? helperText}
           inputProps={{ readOnly, autoComplete: "off" }}
+          multiline={multiline}
         />
       )}
     />

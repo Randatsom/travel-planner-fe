@@ -5,6 +5,14 @@ class EventsService {
   getAllEvents() {
     return http.get<IEvent>("/events/getAll");
   }
+
+  createEvent(data: IEvent) {
+    return http.post<IEvent>("/events/create", data);
+  }
+
+  editEvent(eventId: string, data) {
+    return http.patch<IEvent>(`/events/${eventId}`, data);
+  }
 }
 
 export default new EventsService();

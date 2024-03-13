@@ -98,15 +98,15 @@ export const resetPassword = yup
   })
   .required();
 
-export const addMarketplaceSchema = yup
+export const createEventSchema = yup
   .object({
-    marketplace_id: yup.string().required(getRequiredSelectText("маркетплейс")),
-    name: yup.string().required(getRequiredText("название магазина")),
-    client_id: yup.string(),
-    api_key: yup.string(),
-    contragent_id: yup
+    title: yup
       .string()
-      .required(getRequiredSelectText("id контрагента")),
+      .required(getRequiredText("название"))
+      .max(18, "18 символов - максимум"),
+    description: yup
+      .string()
+      .max(55, "Для описания доступно не более 55 символов"),
   })
   .required();
 

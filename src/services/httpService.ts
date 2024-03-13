@@ -41,6 +41,19 @@ class HttpService extends BaseService {
     });
   }
 
+  async patch<T>(
+    url: string,
+    data: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    return HttpService.operation<T>({
+      method: "patch",
+      url: this.getBaseUrl(url),
+      data,
+      ...config,
+    });
+  }
+
   async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     return HttpService.operation<T>({
       method: "delete",
