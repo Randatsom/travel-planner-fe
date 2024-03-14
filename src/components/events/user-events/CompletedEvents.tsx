@@ -1,6 +1,6 @@
 import React from "react";
 import { IEvent } from "../../../core/models/events";
-import EventsCards from "./EventsCards";
+import EventsCards from "./event-card/EventsCards";
 
 const CompletedEvents = ({ events, refetch, setCurrentTabIndex }) => {
   const completedEvents = events.filter((event: IEvent) => event.completed);

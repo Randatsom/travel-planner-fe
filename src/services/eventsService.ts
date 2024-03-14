@@ -13,6 +13,10 @@ class EventsService {
   editEvent(eventId: string, data) {
     return http.patch<IEvent>(`/events/${eventId}`, data);
   }
+
+  deleteEvent(eventId: string) {
+    return http.delete(`/events/${eventId}`);
+  }
 }
 
 export default new EventsService();

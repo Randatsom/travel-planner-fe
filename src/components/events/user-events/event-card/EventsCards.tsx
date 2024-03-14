@@ -10,20 +10,26 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { IEvent } from "../../../core/models/events";
+import { IEvent } from "../../../../core/models/events";
 import React from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import EventsService from "../../../services/eventsService";
-import { handleError } from "../../../utils/errors";
-import { useAppDispatch } from "../../../utils/hooks/useAppDispatch";
+import EventsService from "../../../../services/eventsService";
+import { handleError } from "../../../../utils/errors";
+import { useAppDispatch } from "../../../../utils/hooks/useAppDispatch";
+import EditUserEventModal from "./edit-user-event/EditUserEventModal";
+import { openModal } from "../../../../core/slices/modal/modalSlice";
+import { ModalId } from "../../../modal/types";
+import DeleteUserEventModal from "./delete-user-event/DeleteUserEventModal";
 
 const EventsCards = ({ events, refetch, setCurrentTabIndex }) => {
+  const [selectedEvent, setSelectedEvent] = React.useState<IEvent | null>(null);
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleMenuClick = (event, ev) => {
     event.currentTarget.setAttribute("data-eventid", ev._id);
     setAnchorEl(event.currentTarget);
+    setSelectedEvent(ev);
   };
 
   const handleMenuClose = () => {
@@ -124,8 +130,24 @@ const EventsCards = ({ events, refetch, setCurrentTabIndex }) => {
               >
                 {ev.completed ? "Сделать активным" : "Завершить событие"}
               </MenuItem>
-              <MenuItem onClick={handleMenuClose}>Редактировать</MenuItem>
-              <MenuItem onClick={handleMenuClose}>Удалить</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  dispatch(openModal(ModalId.EditUserEvent));
+                  handleMenuClose();
+                }}
+              >
+                Редактировать
+              </MenuItem>
+              <EditUserEventModal refetch={refetch} event={selectedEvent} />
+              <MenuItem
+                onClick={() => {
+                  dispatch(openModal(ModalId.DeleteUserEvent));
+                  handleMenuClose();
+                }}
+              >
+                Удалить
+              </MenuItem>
+              <DeleteUserEventModal refetch={refetch} event={selectedEvent} />
             </Menu>
             <Stack spacing={2}>
               <Typography variant="h5" component="div">
