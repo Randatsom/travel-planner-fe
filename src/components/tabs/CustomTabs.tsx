@@ -23,6 +23,8 @@ const CustomTabs = ({ children, currentTabIndex, setCurrentTabIndex }) => {
         <Tabs
           value={currentTabIndex}
           onChange={handleChange}
+          variant="scrollable"
+          scrollButtons="auto"
           aria-label="basic tabs example"
         >
           {childrenArray.map((child, index) => (
