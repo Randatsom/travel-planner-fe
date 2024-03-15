@@ -56,21 +56,10 @@ const EventsCards = ({ events, refetch, setCurrentTabIndex }) => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "calc(100vh - 210px)",
         }}
       >
         <Stack spacing={2}>
-          <Typography variant="h4">Сейчас здесь пусто</Typography>
-
-          <Button
-            sx={{ maxWidth: "220px", alignSelf: "center" }}
-            variant="contained"
-            onClick={() => setCurrentTabIndex(0)}
-          >
-            Создать событие
-          </Button>
+          <Typography variant="h5">Сейчас здесь пусто</Typography>
         </Stack>
       </Box>
     );

@@ -9,7 +9,7 @@ import CustomTabs from "../components/tabs/CustomTabs";
 import CompletedEvents from "../components/events/user-events/CompletedEvents";
 import CreateEventForm from "../components/events/user-events/CreateEventForm";
 
-const AccountPage = () => {
+const ParticipationPage = () => {
   const [currentTabIndex, setCurrentTabIndex] = React.useState(1);
 
   localStorage.removeItem("lastPath");
@@ -32,11 +32,6 @@ const AccountPage = () => {
       currentTabIndex={currentTabIndex}
       setCurrentTabIndex={setCurrentTabIndex}
     >
-      <CreateEventForm
-        label="Создание"
-        refetch={refetch}
-        setCurrentTabIndex={setCurrentTabIndex}
-      />
       <ActiveEvents
         label="Активные"
         events={events}
@@ -53,4 +48,4 @@ const AccountPage = () => {
   );
 };
 
-export default AccountPage;
+export default ParticipationPage;

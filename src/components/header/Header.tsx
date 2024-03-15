@@ -10,40 +10,20 @@ import {
   Menu,
   MenuItem,
   Toolbar,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import React from "react";
-import DrawerMenu from "../menu/DrawerMenu";
 import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
 import { logout } from "../../core/slices/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import paths from "../../routes/paths";
-import { pages, settings } from "./utils";
-import { NavPages, NavSettings } from "./models";
+import { pages } from "./utils";
+import { NavPages } from "./models";
 
 const HeaderComponent = () => {
-  const [open, setOpen] = React.useState(false);
+  const [selectedPagePath, setSelectedPagePath] = React.useState("/");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
-  const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null,
@@ -65,13 +45,6 @@ const HeaderComponent = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
-  };
-
-  const handleNavMenuClick = (page: NavPages, index: number): void => {
-    console.log(page, index);
-    navigate(page.path);
-    pages.forEach((page) => (page.selected = false));
-    pages[index].selected = false;
   };
 
   return (
@@ -128,11 +101,11 @@ const HeaderComponent = () => {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page: NavPages, index: number) => (
+              {pages.map((page: NavPages) => (
                 <MenuItem
                   key={page.name}
                   onClick={() => {
-                    handleNavMenuClick(page, index);
+                    navigate(page.path);
                     handleCloseNavMenu();
                   }}
                 >
@@ -163,14 +136,23 @@ const HeaderComponent = () => {
             EVENTS PLANNER
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page: NavPages, index: number) => (
+            {pages.map((page: NavPages) => (
               <Button
                 key={page.name}
                 onClick={() => {
-                  handleNavMenuClick(page, index);
+                  setSelectedPagePath(page.path);
+                  navigate(page.path);
                   handleCloseNavMenu();
                 }}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                  textDecoration:
+                    selectedPagePath === page.path ? "underline" : "none",
+                  textDecorationColor:
+                    selectedPagePath === page.path ? "white" : "transparent",
+                }}
               >
                 {page.name}
               </Button>
