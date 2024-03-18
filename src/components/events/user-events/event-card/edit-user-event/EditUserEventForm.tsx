@@ -30,7 +30,7 @@ const CreateEventForm = ({
   const user = useSelector(selectCurrentUser);
   const handleCloseModal = () => dispatch(closeModal());
 
-  const { handleSubmit, control } = useForm<IEvent>({
+  const { handleSubmit, control, formState } = useForm<IEvent>({
     mode: "onChange",
     resolver: yupResolver(createEventSchema),
     defaultValues: {
@@ -83,7 +83,12 @@ const CreateEventForm = ({
           </Stack>
         </Grid>
         <Grid item xs={8}>
-          <Button type="submit" variant="contained" color="primary">
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={formState.isSubmitting}
+          >
             Сохранить
           </Button>
         </Grid>

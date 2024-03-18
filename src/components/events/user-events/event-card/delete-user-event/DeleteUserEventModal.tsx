@@ -7,12 +7,15 @@ import EventsService from "../../../../../services/eventsService";
 import { addNotification } from "../../../../../core/slices/notification/notificationSlice";
 import { NotificationStatus } from "../../../../../core/slices/notification/types";
 import { handleError } from "../../../../../utils/errors";
+import { useState } from "react";
 
 const DeleteUserEventModal = ({ refetch, event }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
   const dispatch = useAppDispatch();
   const handleCloseModal = () => dispatch(closeModal());
 
   const handleDeleteEvent = async () => {
+    setIsDeleting(true);
     try {
       await EventsService.deleteEvent(event._id);
       refetch();
@@ -25,6 +28,7 @@ const DeleteUserEventModal = ({ refetch, event }) => {
         }),
       );
     } catch (error) {
+      setIsDeleting(false);
       handleError(error, dispatch);
     }
   };
@@ -40,6 +44,7 @@ const DeleteUserEventModal = ({ refetch, event }) => {
             onClick={handleDeleteEvent}
             variant="contained"
             color="primary"
+            disabled={isDeleting}
           >
             Удалить событие
           </Button>

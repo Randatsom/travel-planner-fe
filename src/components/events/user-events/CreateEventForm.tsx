@@ -19,7 +19,7 @@ const CreateEventForm = ({ refetch, setCurrentTabIndex, allUsers }) => {
   const user = useSelector(selectCurrentUser);
   const isLoading = false;
 
-  const { handleSubmit, control } = useForm<IEvent>({
+  const { handleSubmit, control, formState } = useForm<IEvent>({
     mode: "onChange",
     resolver: yupResolver(createEventSchema),
   });
@@ -71,7 +71,11 @@ const CreateEventForm = ({ refetch, setCurrentTabIndex, allUsers }) => {
           </Stack>
         </Grid>
         <Grid item xs={12}>
-          <Button type="submit" variant="contained" disabled={isLoading}>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={formState.isSubmitting}
+          >
             Создать
           </Button>
         </Grid>
