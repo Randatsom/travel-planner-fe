@@ -17,7 +17,7 @@ const AccountPage = () => {
 
   const {
     refetch,
-    isPending,
+    isFetching,
     data: events,
   } = useQuery<IEvent[]>({
     queryKey: ["events"],
@@ -29,7 +29,7 @@ const AccountPage = () => {
     queryFn: () => UsersService.getAllUsers(),
   });
 
-  if (isPending) {
+  if (isFetching) {
     return <Loading />;
   }
 

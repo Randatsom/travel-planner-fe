@@ -14,14 +14,14 @@ const ParticipationPage = () => {
 
   const {
     refetch,
-    isPending,
+    isFetching,
     data: events,
   } = useQuery<IEvent[]>({
     queryKey: ["events"],
     queryFn: () => EventsService.getParticipationEvents(),
   });
 
-  if (isPending) {
+  if (isFetching) {
     return <Loading />;
   }
 
