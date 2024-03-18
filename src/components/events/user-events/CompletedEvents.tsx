@@ -2,7 +2,7 @@ import React from "react";
 import { IEvent } from "../../../core/models/events";
 import EventsCards from "./event-card/EventsCards";
 
-const CompletedEvents = ({ events, refetch, setCurrentTabIndex }) => {
+const CompletedEvents = ({ events, refetch, setCurrentTabIndex, allUsers }) => {
   const completedEvents = events.filter((event: IEvent) => event.completed);
 
   return (
@@ -10,6 +10,7 @@ const CompletedEvents = ({ events, refetch, setCurrentTabIndex }) => {
       events={completedEvents}
       refetch={refetch}
       setCurrentTabIndex={setCurrentTabIndex}
+      allUsers={allUsers}
     />
   );
 };

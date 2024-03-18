@@ -3,7 +3,11 @@ import { IEvent } from "../core/models/events";
 
 class EventsService {
   getAllEvents() {
-    return http.get<IEvent>("/events/getAll");
+    return http.get<IEvent[]>("/events/getAll");
+  }
+
+  getParticipationEvents() {
+    return http.get<IEvent[]>("/events/getParticipationEvents");
   }
 
   createEvent(data: IEvent) {

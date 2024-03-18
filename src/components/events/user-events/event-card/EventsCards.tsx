@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Card,
@@ -8,6 +9,7 @@ import {
   Menu,
   MenuItem,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { IEvent } from "../../../../core/models/events";
@@ -20,11 +22,16 @@ import EditUserEventModal from "./edit-user-event/EditUserEventModal";
 import { openModal } from "../../../../core/slices/modal/modalSlice";
 import { ModalId } from "../../../modal/types";
 import DeleteUserEventModal from "./delete-user-event/DeleteUserEventModal";
+import { useLocation } from "react-router-dom";
+import { UserType } from "../../../../core/slices/auth/types";
+import { UserInlineAvatars } from "../../../shared/UserInlineAvatars";
 
-const EventsCards = ({ events, refetch, setCurrentTabIndex }) => {
+const EventsCards = ({ events, refetch, allUsers }) => {
   const [selectedEvent, setSelectedEvent] = React.useState<IEvent | null>(null);
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const location = useLocation();
+  const isCurrentPathnameParticipation = location.pathname === "/participation";
 
   const handleMenuClick = (event, ev) => {
     event.currentTarget.setAttribute("data-eventid", ev._id);
@@ -76,8 +83,8 @@ const EventsCards = ({ events, refetch, setCurrentTabIndex }) => {
       {events.map((ev: IEvent) => (
         <Card
           sx={{
-            width: 300,
-            height: 175,
+            width: 350,
+            height: 215,
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -85,19 +92,21 @@ const EventsCards = ({ events, refetch, setCurrentTabIndex }) => {
           key={ev._id}
         >
           <CardContent>
-            <IconButton
-              edge="end"
-              color="inherit"
-              onClick={(event) => handleMenuClick(event, ev)}
-              sx={{
-                float: "right",
-                color: "text.secondary",
-                marginRight: -2,
-                marginTop: -1,
-              }}
-            >
-              <MoreVertIcon />
-            </IconButton>
+            {!isCurrentPathnameParticipation && (
+              <IconButton
+                edge="end"
+                color="inherit"
+                onClick={(event) => handleMenuClick(event, ev)}
+                sx={{
+                  float: "right",
+                  color: "text.secondary",
+                  marginRight: -2,
+                  marginTop: -1,
+                }}
+              >
+                <MoreVertIcon />
+              </IconButton>
+            )}
             <Menu
               anchorEl={
                 anchorEl && ev._id === anchorEl.getAttribute("data-eventid")
@@ -127,7 +136,11 @@ const EventsCards = ({ events, refetch, setCurrentTabIndex }) => {
               >
                 Редактировать
               </MenuItem>
-              <EditUserEventModal refetch={refetch} event={selectedEvent} />
+              <EditUserEventModal
+                refetch={refetch}
+                event={selectedEvent}
+                allUsers={allUsers}
+              />
               <MenuItem
                 onClick={() => {
                   dispatch(openModal(ModalId.DeleteUserEvent));
@@ -145,6 +158,28 @@ const EventsCards = ({ events, refetch, setCurrentTabIndex }) => {
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
                 {ev.description ? ev.description : "Описание отсутствует"}
               </Typography>
+              <Stack
+                sx={{ display: "flex", alignItems: "center" }}
+                direction="row"
+                spacing={1}
+              >
+                {ev.attendees.length > 0 && (
+                  <>
+                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                      Участники:
+                    </Typography>
+                    <UserInlineAvatars
+                      attendees={ev.attendees}
+                      maxAvatars={4}
+                    />
+                  </>
+                )}
+                {ev.attendees.length === 0 && (
+                  <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                    У данного события нет участников
+                  </Typography>
+                )}
+              </Stack>
             </Stack>
           </CardContent>
           <CardActions>

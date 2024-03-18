@@ -10,14 +10,24 @@ import { NotificationStatus } from "../../../../../core/slices/notification/type
 import { handleError } from "../../../../../utils/errors";
 import { closeModal } from "../../../../../core/slices/modal/modalSlice";
 import EventsService from "../../../../../services/eventsService";
+import { attendeesSelectOptions } from "../../../utils";
+import SelectController from "../../../../forms/textField/SelectController";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../../../../core/slices/auth/authSelector";
+import { UserType } from "../../../../../core/slices/auth/types";
 
 type CreateEventFormProps = {
   refetch: any;
   event: IEvent;
 };
 
-const CreateEventForm = ({ refetch, event }: CreateEventFormProps) => {
+const CreateEventForm = ({
+  refetch,
+  event,
+  allUsers,
+}: CreateEventFormProps) => {
   const dispatch = useAppDispatch();
+  const user = useSelector(selectCurrentUser);
   const handleCloseModal = () => dispatch(closeModal());
 
   const { handleSubmit, control } = useForm<IEvent>({
@@ -26,6 +36,7 @@ const CreateEventForm = ({ refetch, event }: CreateEventFormProps) => {
     defaultValues: {
       title: event.title,
       description: event.description,
+      attendees: event.attendees.map((attendee: UserType) => attendee._id),
     },
   });
 
@@ -61,6 +72,13 @@ const CreateEventForm = ({ refetch, event }: CreateEventFormProps) => {
               name="description"
               multiline
               control={control}
+            />
+            <SelectController
+              name="attendees"
+              label="Участники"
+              options={attendeesSelectOptions(allUsers, user._id)}
+              control={control}
+              multiple
             />
           </Stack>
         </Grid>

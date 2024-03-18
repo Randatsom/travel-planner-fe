@@ -9,9 +9,14 @@ import { addNotification } from "../../../core/slices/notification/notificationS
 import { NotificationStatus } from "../../../core/slices/notification/types";
 import { handleError } from "../../../utils/errors";
 import EventsService from "../../../services/eventsService";
+import SelectController from "../../forms/textField/SelectController";
+import { attendeesSelectOptions } from "../utils";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../../core/slices/auth/authSelector";
 
-const CreateEventForm = ({ refetch, setCurrentTabIndex }) => {
+const CreateEventForm = ({ refetch, setCurrentTabIndex, allUsers }) => {
   const dispatch = useAppDispatch();
+  const user = useSelector(selectCurrentUser);
   const isLoading = false;
 
   const { handleSubmit, control } = useForm<IEvent>({
@@ -55,6 +60,13 @@ const CreateEventForm = ({ refetch, setCurrentTabIndex }) => {
               name="description"
               multiline
               control={control}
+            />
+            <SelectController
+              name="attendees"
+              label="Участники"
+              options={attendeesSelectOptions(allUsers, user._id)}
+              control={control}
+              multiple
             />
           </Stack>
         </Grid>

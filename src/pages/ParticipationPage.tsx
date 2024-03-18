@@ -10,9 +10,7 @@ import CompletedEvents from "../components/events/user-events/CompletedEvents";
 import CreateEventForm from "../components/events/user-events/CreateEventForm";
 
 const ParticipationPage = () => {
-  const [currentTabIndex, setCurrentTabIndex] = React.useState(1);
-
-  localStorage.removeItem("lastPath");
+  const [currentTabIndex, setCurrentTabIndex] = React.useState(0);
 
   const {
     refetch,
@@ -20,7 +18,7 @@ const ParticipationPage = () => {
     data: events,
   } = useQuery<IEvent[]>({
     queryKey: ["events"],
-    queryFn: () => EventsService.getAllEvents(),
+    queryFn: () => EventsService.getParticipationEvents(),
   });
 
   if (isPending) {

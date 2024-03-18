@@ -1,4 +1,4 @@
-import React, { useCallback, WheelEventHandler } from 'react'
+import React, { useCallback, WheelEventHandler } from "react";
 import {
   FormControl,
   MenuItem,
@@ -7,41 +7,41 @@ import {
   FormHelperText,
   ListItemText,
   Checkbox,
-} from '@mui/material'
-import { Controller, useFormContext } from 'react-hook-form'
+} from "@mui/material";
+import { Controller, useFormContext } from "react-hook-form";
 
 interface Option {
-  value: string | number
-  label: string
+  value: string | number;
+  label: string;
 }
 
 interface SelectControllerProps {
-  name: string
-  label: string
-  options: Option[]
-  multiple?: boolean
+  name: string;
+  label: string;
+  options: Option[];
+  multiple?: boolean;
 }
 
 const SelectController = ({
   name,
   label,
   options,
+  control,
   multiple,
 }: SelectControllerProps) => {
-  const { control } = useFormContext()
   const handleBlurOnWheel: WheelEventHandler<HTMLDivElement> = useCallback(
     (event) => {
       if (event.target instanceof HTMLElement) {
-        event.target.blur()
+        event.target.blur();
       }
     },
-    []
-  )
+    [],
+  );
 
   return (
     <Controller
       control={control}
-      defaultValue={multiple ? [] : ''}
+      defaultValue={multiple ? [] : ""}
       name={name}
       render={({ field, fieldState }) => (
         <FormControl fullWidth variant="outlined" error={!!fieldState.error}>
@@ -59,10 +59,10 @@ const SelectController = ({
                           .map(
                             (value) =>
                               options.find((option) => option.value === value)
-                                ?.label
+                                ?.label,
                           )
                           .filter((label) => label)
-                          .join(', ')
+                          .join(", ")
                       : selected
                 : undefined
             }
@@ -86,7 +86,7 @@ const SelectController = ({
         </FormControl>
       )}
     />
-  )
-}
+  );
+};
 
-export default SelectController
+export default SelectController;
