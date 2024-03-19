@@ -17,7 +17,6 @@ import { selectCurrentUser } from "../../../core/slices/auth/authSelector";
 const CreateEventForm = ({ refetch, setCurrentTabIndex, allUsers }) => {
   const dispatch = useAppDispatch();
   const user = useSelector(selectCurrentUser);
-  const isLoading = false;
 
   const { handleSubmit, control, formState } = useForm<IEvent>({
     mode: "onChange",
@@ -26,6 +25,7 @@ const CreateEventForm = ({ refetch, setCurrentTabIndex, allUsers }) => {
 
   const onSubmit = async (data: IEvent) => {
     try {
+      data.attendees.unshift(user._id);
       const requestData = {
         ...data,
       };

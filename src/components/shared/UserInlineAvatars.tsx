@@ -51,7 +51,14 @@ export const UserInlineAvatars = ({ attendees, maxAvatars = 6 }) => {
       {attendees.map(
         (attendee: UserType, index: number) =>
           index < maxAvatars && (
-            <Tooltip key={attendee._id} title={attendee.username}>
+            <Tooltip
+              key={attendee._id}
+              title={
+                index === 0
+                  ? attendee.username + " (создатель)"
+                  : attendee.username
+              }
+            >
               <Avatar {...stringAvatar(attendee.username)} />
             </Tooltip>
           ),
