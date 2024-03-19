@@ -27,11 +27,6 @@ const CreateEventForm = ({ setCurrentTabIndex, allUsers }) => {
 
   const onSubmit = async (data: IEvent) => {
     try {
-      // data.attendees.unshift(user._id);
-      const requestData = {
-        ...data,
-      };
-
       createEventMutation.mutate(data);
       setCurrentTabIndex(1);
 

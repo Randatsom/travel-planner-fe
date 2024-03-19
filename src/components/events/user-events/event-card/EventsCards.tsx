@@ -25,6 +25,9 @@ import DeleteUserEventModal from "./delete-user-event/DeleteUserEventModal";
 import { useLocation } from "react-router-dom";
 import { UserType } from "../../../../core/slices/auth/types";
 import { UserInlineAvatars } from "../../../shared/UserInlineAvatars";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../../../core/slices/auth/authSelector";
+import { useEditEvent } from "../../query/mutations";
 
 const EventsCards = ({ events, allUsers }) => {
   const [selectedEvent, setSelectedEvent] = React.useState<IEvent | null>(null);
@@ -32,6 +35,8 @@ const EventsCards = ({ events, allUsers }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const location = useLocation();
   const isCurrentPathnameParticipation = location.pathname === "/participation";
+  const user = useSelector(selectCurrentUser);
+  const editUserEventMutation = useEditEvent();
 
   const handleMenuClick = (event, ev) => {
     event.currentTarget.setAttribute("data-eventid", ev._id);
@@ -43,14 +48,14 @@ const EventsCards = ({ events, allUsers }) => {
     setAnchorEl(null);
   };
 
-  const eventStatusHandler = async (ev: IEvent) => {
+  const eventStatusHandler = (ev: IEvent) => {
     try {
       const requestData = {
         ...ev,
         completed: !ev.completed,
       };
 
-      await EventsService.editEvent(ev._id, requestData);
+      editUserEventMutation.mutate({ eventId: ev._id, data: requestData });
     } catch (error) {
       handleError(error, dispatch);
     }
@@ -158,13 +163,13 @@ const EventsCards = ({ events, allUsers }) => {
                 direction="row"
                 spacing={1}
               >
-                {ev.attendees.length > 0 && (
+                {ev.attendees.length > 1 && (
                   <>
                     <Typography sx={{ mb: 1.5 }} color="text.secondary">
                       Участники:
                     </Typography>
                     <UserInlineAvatars
-                      attendees={ev.attendees}
+                      attendees={[user, ...ev.attendees]}
                       maxAvatars={4}
                     />
                   </>
