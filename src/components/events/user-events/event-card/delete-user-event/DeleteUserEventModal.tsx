@@ -8,17 +8,18 @@ import { addNotification } from "../../../../../core/slices/notification/notific
 import { NotificationStatus } from "../../../../../core/slices/notification/types";
 import { handleError } from "../../../../../utils/errors";
 import { useState } from "react";
+import { useDeleteEvent } from "../../../query/mutations";
 
-const DeleteUserEventModal = ({ refetch, event }) => {
+const DeleteUserEventModal = ({ event }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const dispatch = useAppDispatch();
   const handleCloseModal = () => dispatch(closeModal());
+  const deleteUserEventMutation = useDeleteEvent();
 
-  const handleDeleteEvent = async () => {
+  const handleDeleteEvent = () => {
     setIsDeleting(true);
     try {
-      await EventsService.deleteEvent(event._id);
-      refetch();
+      deleteUserEventMutation.mutate(event._id);
       handleCloseModal();
 
       dispatch(

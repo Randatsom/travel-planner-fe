@@ -26,7 +26,7 @@ import { useLocation } from "react-router-dom";
 import { UserType } from "../../../../core/slices/auth/types";
 import { UserInlineAvatars } from "../../../shared/UserInlineAvatars";
 
-const EventsCards = ({ events, refetch, allUsers }) => {
+const EventsCards = ({ events, allUsers }) => {
   const [selectedEvent, setSelectedEvent] = React.useState<IEvent | null>(null);
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -51,7 +51,6 @@ const EventsCards = ({ events, refetch, allUsers }) => {
       };
 
       await EventsService.editEvent(ev._id, requestData);
-      refetch();
     } catch (error) {
       handleError(error, dispatch);
     }
@@ -136,11 +135,7 @@ const EventsCards = ({ events, refetch, allUsers }) => {
               >
                 Редактировать
               </MenuItem>
-              <EditUserEventModal
-                refetch={refetch}
-                event={selectedEvent}
-                allUsers={allUsers}
-              />
+              <EditUserEventModal event={selectedEvent} allUsers={allUsers} />
               <MenuItem
                 onClick={() => {
                   dispatch(openModal(ModalId.DeleteUserEvent));
@@ -149,7 +144,7 @@ const EventsCards = ({ events, refetch, allUsers }) => {
               >
                 Удалить
               </MenuItem>
-              <DeleteUserEventModal refetch={refetch} event={selectedEvent} />
+              <DeleteUserEventModal event={selectedEvent} />
             </Menu>
             <Stack spacing={2}>
               <Typography variant="h5" component="div">

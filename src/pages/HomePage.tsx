@@ -1,35 +1,27 @@
 import React from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import EventsService from "../services/eventsService";
-import Loading from "../components/system/Loading";
 import { IEvent } from "../core/models/events";
 import ActiveEvents from "../components/events/user-events/ActiveEvents";
 import CustomTabs from "../components/tabs/CustomTabs";
 import CompletedEvents from "../components/events/user-events/CompletedEvents";
 import CreateEventForm from "../components/events/user-events/CreateEventForm";
 import UsersService from "../services/UsersService";
+import Loading from "../components/system/Loading";
+import { useEvents } from "../components/events/query/queries";
 
 const AccountPage = () => {
   const [currentTabIndex, setCurrentTabIndex] = React.useState(1);
 
   localStorage.removeItem("lastPath");
 
-  const {
-    refetch,
-    isLoading,
-    data: events,
-  } = useQuery<IEvent[]>({
-    queryKey: ["events"],
-    queryFn: () => EventsService.getAllEvents(),
-  });
+  const eventsQuery = useEvents();
 
-  const { data: allUsers } = useQuery<IEvent[]>({
+  const allUsersQuery = useQuery<IEvent[]>({
     queryKey: ["allUsers"],
     queryFn: () => UsersService.getAllUsers(),
   });
 
-  if (isLoading) {
+  if (eventsQuery.isFetching && !eventsQuery.data) {
     return <Loading />;
   }
 
@@ -40,23 +32,20 @@ const AccountPage = () => {
     >
       <CreateEventForm
         label="Создание"
-        refetch={refetch}
         setCurrentTabIndex={setCurrentTabIndex}
-        allUsers={allUsers}
+        allUsers={allUsersQuery.data}
       />
       <ActiveEvents
         label="Активные"
-        events={events}
-        refetch={refetch}
+        events={eventsQuery.data}
         setCurrentTabIndex={setCurrentTabIndex}
-        allUsers={allUsers}
+        allUsers={allUsersQuery.data}
       />
       <CompletedEvents
         label="Завершенные"
-        events={events}
-        refetch={refetch}
+        events={eventsQuery.data}
         setCurrentTabIndex={setCurrentTabIndex}
-        allUsers={allUsers}
+        allUsers={allUsersQuery.data}
       />
     </CustomTabs>
   );

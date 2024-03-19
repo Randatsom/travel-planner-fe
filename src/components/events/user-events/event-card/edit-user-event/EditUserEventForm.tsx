@@ -15,20 +15,18 @@ import SelectController from "../../../../forms/textField/SelectController";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../../../core/slices/auth/authSelector";
 import { UserType } from "../../../../../core/slices/auth/types";
+import { useEditEvent } from "../../../query/mutations";
 
 type CreateEventFormProps = {
   refetch: any;
   event: IEvent;
 };
 
-const CreateEventForm = ({
-  refetch,
-  event,
-  allUsers,
-}: CreateEventFormProps) => {
+const EditUserEventForm = ({ event, allUsers }: CreateEventFormProps) => {
   const dispatch = useAppDispatch();
   const user = useSelector(selectCurrentUser);
   const handleCloseModal = () => dispatch(closeModal());
+  const editUserEventMutation = useEditEvent();
 
   const { handleSubmit, control, formState } = useForm<IEvent>({
     mode: "onChange",
@@ -40,10 +38,9 @@ const CreateEventForm = ({
     },
   });
 
-  const onSubmit = async (data: IEvent) => {
+  const onSubmit = (data: IEvent) => {
     try {
-      await EventsService.editEvent(event._id, data);
-      refetch();
+      editUserEventMutation.mutate({ eventId: event._id, data });
       handleCloseModal();
 
       dispatch(
@@ -97,4 +94,4 @@ const CreateEventForm = ({
   );
 };
 
-export default CreateEventForm;
+export default EditUserEventForm;

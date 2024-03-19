@@ -13,10 +13,12 @@ import SelectController from "../../forms/textField/SelectController";
 import { attendeesSelectOptions } from "../utils";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../core/slices/auth/authSelector";
+import { useCreateEvent } from "../query/mutations";
 
-const CreateEventForm = ({ refetch, setCurrentTabIndex, allUsers }) => {
+const CreateEventForm = ({ setCurrentTabIndex, allUsers }) => {
   const dispatch = useAppDispatch();
   const user = useSelector(selectCurrentUser);
+  const createEventMutation = useCreateEvent();
 
   const { handleSubmit, control, formState } = useForm<IEvent>({
     mode: "onChange",
@@ -25,13 +27,12 @@ const CreateEventForm = ({ refetch, setCurrentTabIndex, allUsers }) => {
 
   const onSubmit = async (data: IEvent) => {
     try {
-      data.attendees.unshift(user._id);
+      // data.attendees.unshift(user._id);
       const requestData = {
         ...data,
       };
 
-      await EventsService.createEvent(requestData);
-      refetch();
+      createEventMutation.mutate(data);
       setCurrentTabIndex(1);
 
       dispatch(

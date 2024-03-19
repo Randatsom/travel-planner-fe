@@ -15,13 +15,13 @@ const ParticipationPage = () => {
   const {
     refetch,
     isFetching,
-    data: events,
+    data: participantEvents,
   } = useQuery<IEvent[]>({
-    queryKey: ["events"],
+    queryKey: ["participantEvents"],
     queryFn: () => EventsService.getParticipationEvents(),
   });
 
-  if (isFetching) {
+  if (isFetching && !participantEvents) {
     return <Loading />;
   }
 
@@ -32,13 +32,13 @@ const ParticipationPage = () => {
     >
       <ActiveEvents
         label="Активные"
-        events={events}
+        events={participantEvents}
         refetch={refetch}
         setCurrentTabIndex={setCurrentTabIndex}
       />
       <CompletedEvents
         label="Завершенные"
-        events={events}
+        events={participantEvents}
         refetch={refetch}
         setCurrentTabIndex={setCurrentTabIndex}
       />
