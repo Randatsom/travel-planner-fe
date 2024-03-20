@@ -8,3 +8,10 @@ export function useEvents() {
     queryFn: EventsService.getAllEvents,
   });
 }
+
+export function useEvent(eventId: string) {
+  return useQuery<IEvent[]>({
+    queryKey: ["eventInfo"],
+    queryFn: () => EventsService.getEvent(eventId),
+  });
+}

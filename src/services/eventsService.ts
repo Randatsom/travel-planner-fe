@@ -10,6 +10,10 @@ class EventsService {
     return http.get<IEvent[]>("/events/getParticipationEvents");
   }
 
+  getEvent(eventId) {
+    return http.get<IEvent>(`/events/${eventId}`);
+  }
+
   createEvent(data: IEvent) {
     return http.post<IEvent>("/events/create", data);
   }

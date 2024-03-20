@@ -26,7 +26,7 @@ const EditUserEventForm = ({ event, allUsers }: CreateEventFormProps) => {
   const dispatch = useAppDispatch();
   const user = useSelector(selectCurrentUser);
   const handleCloseModal = () => dispatch(closeModal());
-  const editUserEventMutation = useEditEvent();
+  const editUserEventMutation = useEditEvent("events");
 
   const { handleSubmit, control, formState } = useForm<IEvent>({
     mode: "onChange",

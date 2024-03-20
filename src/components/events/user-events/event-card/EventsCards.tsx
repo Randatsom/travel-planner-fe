@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -9,13 +8,11 @@ import {
   Menu,
   MenuItem,
   Stack,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { IEvent } from "../../../../core/models/events";
 import React from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import EventsService from "../../../../services/eventsService";
 import { handleError } from "../../../../utils/errors";
 import { useAppDispatch } from "../../../../utils/hooks/useAppDispatch";
 import EditUserEventModal from "./edit-user-event/EditUserEventModal";
@@ -23,20 +20,21 @@ import { openModal } from "../../../../core/slices/modal/modalSlice";
 import { ModalId } from "../../../modal/types";
 import DeleteUserEventModal from "./delete-user-event/DeleteUserEventModal";
 import { useLocation } from "react-router-dom";
-import { UserType } from "../../../../core/slices/auth/types";
 import { UserInlineAvatars } from "../../../shared/UserInlineAvatars";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../../core/slices/auth/authSelector";
 import { useEditEvent } from "../../query/mutations";
+import { useNavigate } from "react-router-dom";
 
 const EventsCards = ({ events, allUsers }) => {
+  const navigate = useNavigate();
   const [selectedEvent, setSelectedEvent] = React.useState<IEvent | null>(null);
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const location = useLocation();
   const isCurrentPathnameParticipation = location.pathname === "/participation";
   const user = useSelector(selectCurrentUser);
-  const editUserEventMutation = useEditEvent();
+  const editUserEventMutation = useEditEvent("events");
 
   const handleMenuClick = (event, ev) => {
     event.currentTarget.setAttribute("data-eventid", ev._id);
@@ -183,7 +181,9 @@ const EventsCards = ({ events, allUsers }) => {
             </Stack>
           </CardContent>
           <CardActions>
-            <Button size="small">Перейти к событию</Button>
+            <Button size="small" onClick={() => navigate(`/event/${ev._id}`)}>
+              Перейти к событию
+            </Button>
           </CardActions>
         </Card>
       ))}

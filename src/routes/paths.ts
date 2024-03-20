@@ -1,7 +1,8 @@
 export default {
   HOME: "/",
-  LOGIN: "/auth/login",
+  LOGIN: "/login",
   REGISTER: "/auth/register",
   ACCOUNT: "/account",
   PARTICIPATION: "/participation",
+  EVENT: "/event/:eventId",
 };

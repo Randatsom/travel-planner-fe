@@ -16,7 +16,7 @@ export function useCreateEvent() {
   });
 }
 
-export function useEditEvent() {
+export function useEditEvent(queryKey: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ eventId, data }: { eventId: string; data: IEvent }) =>
@@ -25,7 +25,7 @@ export function useEditEvent() {
       if (error) {
         console.log(error);
       } else {
-        await queryClient.invalidateQueries({ queryKey: ["events"] });
+        await queryClient.invalidateQueries({ queryKey: [queryKey] });
       }
     },
   });
