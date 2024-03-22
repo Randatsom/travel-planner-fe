@@ -16,13 +16,14 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../../../core/slices/auth/authSelector";
 import { UserType } from "../../../../../core/slices/auth/types";
 import { useEditEvent } from "../../../query/mutations";
+import { selectUsers } from "../../../../../core/slices/users/usersSelector";
 
 type CreateEventFormProps = {
   event: IEvent;
-  allUsers: UserType[];
 };
 
-const EditUserEventForm = ({ event, allUsers }: CreateEventFormProps) => {
+const EditUserEventForm = ({ event }: CreateEventFormProps) => {
+  const users = useSelector(selectUsers);
   const dispatch = useAppDispatch();
   const user = useSelector(selectCurrentUser);
   const handleCloseModal = () => dispatch(closeModal());
@@ -73,7 +74,7 @@ const EditUserEventForm = ({ event, allUsers }: CreateEventFormProps) => {
             <SelectController
               name="attendees"
               label="Участники"
-              options={attendeesSelectOptions(allUsers, user._id)}
+              options={attendeesSelectOptions(users, user._id)}
               control={control}
               multiple
             />

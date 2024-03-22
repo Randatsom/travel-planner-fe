@@ -4,6 +4,6 @@ export default {
   REGISTER: "/auth/register",
   ACCOUNT: "/account",
   PARTICIPATION: "/participation",
-  EVENT: "/event/:eventId",
+  EVENT: "/events/:eventId",
   LIST: "/lists/:listId",
 };

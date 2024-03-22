@@ -1,12 +1,11 @@
-import React, { ReactNode } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch } from "../../../../utils/hooks/useAppDispatch";
 import {
   IEvent,
   IEventList,
   IEventListItems,
 } from "../../../../core/models/events";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useEvent } from "../../query/queries";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Checkbox,
   IconButton,
@@ -24,14 +23,27 @@ import { openModal } from "../../../../core/slices/modal/modalSlice";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import { AddItemModal } from "./add-item/AddItemModal";
+import { useSelector } from "react-redux";
+import { selectEvent } from "../../../../core/slices/event/eventSelect";
+import { useEvent } from "../../query/queries";
+import { updateEvent } from "../../../../core/slices/event/eventSlice";
 
 export const EventList = () => {
-  const [checked, setChecked] = React.useState([0]);
+  const [checked, setChecked] = useState([0]);
+  const [list, setList] = useState<IEventList>([0]);
   const dispatch = useAppDispatch();
   const { eventId, listId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const listData = location.state.listData;
+  const event = useSelector(selectEvent);
+
+  const { data, isPending }: { data: IEvent } = useEvent();
+
+  useEffect(() => {
+    dispatch(updateEvent(data));
+    setList(data?.lists?.find((list: IEventList) => list._id === listId));
+  }, [dispatch, data]);
 
   const handleToggle = (value: number) => () => {
     const currentIndex = checked.indexOf(value);
@@ -46,6 +58,18 @@ export const EventList = () => {
     setChecked(newChecked);
   };
 
+  useEffect(() => {
+    if (!event) {
+      navigate(`/events/${eventId}`, {
+        state: { tabIndexToSelect: 1 },
+      });
+    }
+  });
+
+  if (!event) {
+    return;
+  }
+
   return (
     <>
       <Stack direction="row" spacing={2}>
@@ -55,13 +79,15 @@ export const EventList = () => {
             color="inherit"
             sx={{ width: "55px" }}
             onClick={() =>
-              navigate(`/event/${eventId}`, { state: { tabIndexToSelect: 1 } })
+              navigate(`/events/${eventId}`, {
+                state: { tabIndexToSelect: 1 },
+              })
             }
           >
             <ArrowBackIcon />
           </IconButton>
         </Tooltip>
-        <Typography variant="h3">{listData.title}</Typography>
+        <Typography variant="h3">{list.title}</Typography>
         <Tooltip title="Добавить элемент в список">
           <IconButton
             color="primary"
@@ -72,19 +98,24 @@ export const EventList = () => {
             <AddIcon />
           </IconButton>
         </Tooltip>
-        {/*<AddItemModal />*/}
+        <AddItemModal event={event} list={list} />
       </Stack>
       <List sx={{ width: "100%", maxWidth: 550, bgcolor: "background.paper" }}>
-        {listData?.items.map((item: IEventListItems) => {
+        {list?.items.map((item: IEventListItems) => {
           const labelId = `checkbox-list-label-${item._id}`;
 
           return (
             <ListItem
               key={item._id}
               secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <DeleteIcon />
-                </IconButton>
+                <>
+                  <IconButton edge="end" aria-label="delete">
+                    <DeleteIcon />
+                  </IconButton>
+                  <IconButton edge="end" aria-label="delete">
+                    <PersonAddAltIcon />
+                  </IconButton>
+                </>
               }
               disablePadding
             >

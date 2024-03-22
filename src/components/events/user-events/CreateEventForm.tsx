@@ -14,10 +14,12 @@ import { attendeesSelectOptions } from "../utils";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../core/slices/auth/authSelector";
 import { useCreateEvent } from "../query/mutations";
+import { selectUsers } from "../../../core/slices/users/usersSelector";
 
-const CreateEventForm = ({ setCurrentTabIndex, allUsers }) => {
+const CreateEventForm = ({ setCurrentTabIndex }) => {
   const dispatch = useAppDispatch();
   const user = useSelector(selectCurrentUser);
+  const users = useSelector(selectUsers);
   const createEventMutation = useCreateEvent();
 
   const { handleSubmit, control, formState } = useForm<IEvent>({
@@ -60,7 +62,7 @@ const CreateEventForm = ({ setCurrentTabIndex, allUsers }) => {
             <SelectController
               name="attendees"
               label="Участники"
-              options={attendeesSelectOptions(allUsers, user._id)}
+              options={attendeesSelectOptions(users, user._id)}
               control={control}
               multiple
             />

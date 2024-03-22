@@ -25,8 +25,9 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../../core/slices/auth/authSelector";
 import { useEditEvent } from "../../query/mutations";
 import { useNavigate } from "react-router-dom";
+import { selectUsers } from "../../../../core/slices/users/usersSelector";
 
-const EventsCards = ({ events, allUsers }) => {
+const EventsCards = ({ events }) => {
   const navigate = useNavigate();
   const [selectedEvent, setSelectedEvent] = React.useState<IEvent | null>(null);
   const dispatch = useAppDispatch();
@@ -34,6 +35,7 @@ const EventsCards = ({ events, allUsers }) => {
   const location = useLocation();
   const isCurrentPathnameParticipation = location.pathname === "/participation";
   const user = useSelector(selectCurrentUser);
+  const users = useSelector(selectUsers);
   const editUserEventMutation = useEditEvent("events");
 
   const handleMenuClick = (event, ev) => {
@@ -138,7 +140,7 @@ const EventsCards = ({ events, allUsers }) => {
               >
                 Редактировать
               </MenuItem>
-              <EditUserEventModal event={selectedEvent} allUsers={allUsers} />
+              <EditUserEventModal event={selectedEvent} />
               <MenuItem
                 onClick={() => {
                   dispatch(openModal(ModalId.DeleteUserEvent));
@@ -161,7 +163,7 @@ const EventsCards = ({ events, allUsers }) => {
                 direction="row"
                 spacing={1}
               >
-                {ev.attendees.length > 1 && (
+                {ev.attendees.length > 0 && (
                   <>
                     <Typography sx={{ mb: 1.5 }} color="text.secondary">
                       Участники:
@@ -181,7 +183,7 @@ const EventsCards = ({ events, allUsers }) => {
             </Stack>
           </CardContent>
           <CardActions>
-            <Button size="small" onClick={() => navigate(`/event/${ev._id}`)}>
+            <Button size="small" onClick={() => navigate(`/events/${ev._id}`)}>
               Перейти к событию
             </Button>
           </CardActions>

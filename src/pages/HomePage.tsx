@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { IEvent } from "../core/models/events";
 import ActiveEvents from "../components/events/user-events/ActiveEvents";
@@ -8,9 +8,18 @@ import CreateEventForm from "../components/events/user-events/CreateEventForm";
 import UsersService from "../services/UsersService";
 import Loading from "../components/system/Loading";
 import { useEvents } from "../components/events/query/queries";
+import { useAppDispatch } from "../utils/hooks/useAppDispatch";
+import { updateEvents } from "../core/slices/events/eventsSlice";
+import { useSelector } from "react-redux";
+import { selectEvents } from "../core/slices/events/eventsSelector";
+import { updateUsers } from "../core/slices/users/usersSlice";
+import { selectUsers } from "../core/slices/users/usersSelector";
 
-const AccountPage = () => {
+const HomePage = () => {
   const [currentTabIndex, setCurrentTabIndex] = React.useState(1);
+  const dispatch = useAppDispatch();
+  const events = useSelector(selectEvents);
+  const users = useSelector(selectUsers);
 
   localStorage.removeItem("lastPath");
 
@@ -20,6 +29,14 @@ const AccountPage = () => {
     queryKey: ["allUsers"],
     queryFn: () => UsersService.getAllUsers(),
   });
+
+  useEffect(() => {
+    dispatch(updateEvents(eventsQuery.data));
+  }, [dispatch, eventsQuery.data]);
+
+  useEffect(() => {
+    dispatch(updateUsers(allUsersQuery.data));
+  }, [dispatch, eventsQuery.data]);
 
   if (eventsQuery.isFetching && !eventsQuery.data) {
     return <Loading />;
@@ -33,22 +50,14 @@ const AccountPage = () => {
       <CreateEventForm
         label="Создание"
         setCurrentTabIndex={setCurrentTabIndex}
-        allUsers={allUsersQuery.data}
       />
-      <ActiveEvents
-        label="Активные"
-        events={eventsQuery.data}
-        setCurrentTabIndex={setCurrentTabIndex}
-        allUsers={allUsersQuery.data}
-      />
+      <ActiveEvents label="Активные" setCurrentTabIndex={setCurrentTabIndex} />
       <CompletedEvents
         label="Завершенные"
-        events={eventsQuery.data}
         setCurrentTabIndex={setCurrentTabIndex}
-        allUsers={allUsersQuery.data}
       />
     </CustomTabs>
   );
 };
 
-export default AccountPage;
+export default HomePage;

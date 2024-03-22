@@ -4,23 +4,23 @@ import {
   Card,
   CardContent,
   Grid,
-  Stack,
   Typography,
 } from "@mui/material";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import LiquorIcon from "@mui/icons-material/Liquor";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CategoryIcon from "@mui/icons-material/Category";
-import { IEventList } from "../../../../core/models/events";
+import { IEvent, IEventList } from "../../../../core/models/events";
 import React from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEditEvent } from "../../query/mutations";
-import { EventList } from "./EventList";
+import { useSelector } from "react-redux";
+import { selectEvent } from "../../../../core/slices/event/eventSelect";
 
-export const EventLists = ({ event, setCurrentTabIndex }) => {
-  const { eventId } = useParams();
+export const EventLists = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const event: IEvent = useSelector(selectEvent);
   const cardStyles = {
     width: 250,
     height: 300,
@@ -70,15 +70,15 @@ export const EventLists = ({ event, setCurrentTabIndex }) => {
   };
 
   const handleListCreation = () => {
-    if (!event.lists.length) {
+    if (!event?.lists.length) {
       editUserEventMutation.mutate({
-        eventId,
+        eventId: event._id,
         data: { ...event, lists: [...defaultLists] },
       });
     }
   };
 
-  if (!event.lists.length) {
+  if (!event?.lists.length) {
     return (
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -104,14 +104,7 @@ export const EventLists = ({ event, setCurrentTabIndex }) => {
         <Card
           key={list._id}
           sx={cardStyles}
-          onClick={() =>
-            navigate(`${location.pathname}/lists/${list._id}`, {
-              state: {
-                listData: list,
-                eventData: event,
-              },
-            })
-          }
+          onClick={() => navigate(`${location.pathname}/lists/${list._id}`)}
         >
           <CardContent>
             <Typography variant="h5">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import EventsService from "../services/eventsService";
@@ -8,9 +8,12 @@ import ActiveEvents from "../components/events/user-events/ActiveEvents";
 import CustomTabs from "../components/tabs/CustomTabs";
 import CompletedEvents from "../components/events/user-events/CompletedEvents";
 import CreateEventForm from "../components/events/user-events/CreateEventForm";
+import { useAppDispatch } from "../utils/hooks/useAppDispatch";
+import { updateParticipantEvents } from "../core/slices/participantEvents/participantEventsSlice";
 
 const ParticipationPage = () => {
   const [currentTabIndex, setCurrentTabIndex] = React.useState(0);
+  const dispatch = useAppDispatch();
 
   const {
     refetch,
@@ -20,6 +23,10 @@ const ParticipationPage = () => {
     queryKey: ["participantEvents"],
     queryFn: () => EventsService.getParticipationEvents(),
   });
+
+  useEffect(() => {
+    dispatch(updateParticipantEvents(participantEvents));
+  }, [dispatch, participantEvents]);
 
   if (isFetching && !participantEvents) {
     return <Loading />;
@@ -32,14 +39,12 @@ const ParticipationPage = () => {
     >
       <ActiveEvents
         label="Активные"
-        events={participantEvents}
-        refetch={refetch}
+        isParticipantEvents={true}
         setCurrentTabIndex={setCurrentTabIndex}
       />
       <CompletedEvents
         label="Завершенные"
-        events={participantEvents}
-        refetch={refetch}
+        isParticipantEvents={true}
         setCurrentTabIndex={setCurrentTabIndex}
       />
     </CustomTabs>

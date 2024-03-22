@@ -23,19 +23,14 @@ import { handleError } from "../../../../../utils/errors";
 type AddItemFormProps = {
   event: IEvent;
   list: IEventList;
-  setSelectedList: (value: ((prevState: null) => null) | null) => void;
 };
 
-export const AddItemForm = ({
-  event,
-  list,
-  setSelectedList,
-}: AddItemFormProps) => {
+export const AddItemForm = ({ event, list }: AddItemFormProps) => {
   const dispatch = useAppDispatch();
   const handleCloseModal = () => dispatch(closeModal());
   const [isSwitchChecked, setIsSwitchChecked] = useState(true);
-  const editUserEventMutation = useEditEvent("eventInfo");
   const { eventId } = useParams();
+  const editUserEventMutation = useEditEvent("eventInfo");
 
   const { handleSubmit, control, formState } = useForm<IEvent>({
     mode: "onChange",
@@ -74,7 +69,6 @@ export const AddItemForm = ({
       const editedEvent = convertRequestData(title);
       editUserEventMutation.mutate({ eventId, data: editedEvent });
       handleCloseModal();
-      setSelectedList(list);
       dispatch(
         addNotification({
           text: "Элементы добавлены!",
