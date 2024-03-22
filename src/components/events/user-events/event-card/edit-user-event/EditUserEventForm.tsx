@@ -18,8 +18,8 @@ import { UserType } from "../../../../../core/slices/auth/types";
 import { useEditEvent } from "../../../query/mutations";
 
 type CreateEventFormProps = {
-  refetch: any;
   event: IEvent;
+  allUsers: UserType[];
 };
 
 const EditUserEventForm = ({ event, allUsers }: CreateEventFormProps) => {

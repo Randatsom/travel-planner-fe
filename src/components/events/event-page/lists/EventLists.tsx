@@ -13,13 +13,14 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import CategoryIcon from "@mui/icons-material/Category";
 import { IEventList } from "../../../../core/models/events";
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useEditEvent } from "../../query/mutations";
 import { EventList } from "./EventList";
 
-export const EventLists = ({ event }) => {
-  const [selectedList, setSelectedList] = React.useState(null);
+export const EventLists = ({ event, setCurrentTabIndex }) => {
   const { eventId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const cardStyles = {
     width: 250,
     height: 300,
@@ -90,10 +91,6 @@ export const EventLists = ({ event }) => {
     );
   }
 
-  if (selectedList) {
-    return <EventList list={selectedList} setSelectedList={setSelectedList} />;
-  }
-
   return (
     <Box
       sx={{
@@ -107,7 +104,14 @@ export const EventLists = ({ event }) => {
         <Card
           key={list._id}
           sx={cardStyles}
-          onClick={() => setSelectedList(list)}
+          onClick={() =>
+            navigate(`${location.pathname}/lists/${list._id}`, {
+              state: {
+                listData: list,
+                eventData: event,
+              },
+            })
+          }
         >
           <CardContent>
             <Typography variant="h5">

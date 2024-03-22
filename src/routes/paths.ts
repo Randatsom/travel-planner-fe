@@ -5,4 +5,5 @@ export default {
   ACCOUNT: "/account",
   PARTICIPATION: "/participation",
   EVENT: "/event/:eventId",
+  LIST: "/lists/:listId",
 };

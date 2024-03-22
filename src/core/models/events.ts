@@ -1,8 +1,14 @@
+export interface IEventListItems {
+  _id: string;
+  title: string;
+  checked: boolean;
+}
+
 export interface IEventList {
   _id: string;
   title: string;
   iconName: string;
-  items: any[];
+  items: IEventListItems[];
   completed: number;
   updatedAt: string;
 }

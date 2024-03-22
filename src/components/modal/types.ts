@@ -4,6 +4,7 @@ import { ButtonProps } from "@mui/material";
 export enum ModalId {
   EditUserEvent = "edit-user-event",
   DeleteUserEvent = "delete-user-event",
+  AddItemToEventList = "add-item-to-event-list",
 }
 
 export type ModalData = {

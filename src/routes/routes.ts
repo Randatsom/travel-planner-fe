@@ -10,6 +10,7 @@ import AccountPage from "../pages/AccountPage";
 import ParticipationPage from "../pages/ParticipationPage";
 import { EventPage } from "../pages/EventPage";
 import { EventList } from "../components/events/event-page/lists/EventList";
+import Account from "../components/account/Account";
 
 const authRoutes = [
   {
@@ -48,6 +49,12 @@ const protectedRoutes = protectRoutes([
     component: EventPage,
     layout: AccountLayout,
     layoutProps: { maxWidth: "xl" },
+  },
+  {
+    path: paths.EVENT + paths.LIST,
+    component: EventList,
+    layout: AccountLayout,
+    layoutProps: { maxWidth: "md" },
   },
 ]);
 

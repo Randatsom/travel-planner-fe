@@ -110,6 +110,12 @@ export const createEventSchema = yup
   })
   .required();
 
+export const addItemToListSchema = yup
+  .object({
+    title: yup.string().required(getRequiredText("хотя бы что-то")),
+  })
+  .required();
+
 export const addDLAccountSchema = yup
   .object({
     login: yup
