@@ -14,6 +14,7 @@ export const EventPage = () => {
   const { eventId } = useParams();
   const location = useLocation();
   const tabIndexToSelect = location.state?.tabIndexToSelect;
+  const selectedList = location.state?.selectedList;
   const [currentTabIndex, setCurrentTabIndex] = React.useState(
     tabIndexToSelect ?? 0,
   );
@@ -33,7 +34,7 @@ export const EventPage = () => {
       setCurrentTabIndex={setCurrentTabIndex}
     >
       <MainInformation label="Информация" />
-      <EventLists label="Списки" />
+      <EventLists label="Списки" stateSelectedList={selectedList} />
       <MainInformation label="Траты" />
       <MainInformation label="Заметки" />
     </CustomTabs>

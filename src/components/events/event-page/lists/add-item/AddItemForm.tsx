@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useEditEvent } from "../../../query/mutations";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { addNotification } from "../../../../../core/slices/notification/notificationSlice";
 import { NotificationStatus } from "../../../../../core/slices/notification/types";
 import { handleError } from "../../../../../utils/errors";
@@ -25,8 +25,13 @@ type AddItemFormProps = {
   list: IEventList;
 };
 
-export const AddItemForm = ({ event, list }: AddItemFormProps) => {
+export const AddItemForm = ({
+  event,
+  list,
+  setSelectedList,
+}: AddItemFormProps) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const handleCloseModal = () => dispatch(closeModal());
   const [isSwitchChecked, setIsSwitchChecked] = useState(true);
   const { eventId } = useParams();
@@ -64,11 +69,21 @@ export const AddItemForm = ({ event, list }: AddItemFormProps) => {
     return editedEvent;
   };
 
-  const onSubmit = ({ title }: { title: string }) => {
+  const onSubmit = async ({ title }: { title: string }) => {
     try {
       const editedEvent = convertRequestData(title);
-      editUserEventMutation.mutate({ eventId, data: editedEvent });
+      await editUserEventMutation.mutate({
+        eventId,
+        data: editedEvent,
+      });
       handleCloseModal();
+      console.log(editedEvent);
+      navigate(`/events/${event._id}`, {
+        state: {
+          tabIndexToSelect: 1,
+          selectedList: editedEvent.lists[editedEvent.lists.length - 1],
+        },
+      });
       dispatch(
         addNotification({
           text: "Элементы добавлены!",

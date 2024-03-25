@@ -11,13 +11,15 @@ import LiquorIcon from "@mui/icons-material/Liquor";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CategoryIcon from "@mui/icons-material/Category";
 import { IEvent, IEventList } from "../../../../core/models/events";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEditEvent } from "../../query/mutations";
 import { useSelector } from "react-redux";
 import { selectEvent } from "../../../../core/slices/event/eventSelect";
+import { EventList } from "./EventList";
 
-export const EventLists = () => {
+export const EventLists = ({ stateSelectedList }) => {
+  const [selectedList, setSelectedList] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const event: IEvent = useSelector(selectEvent);
@@ -78,6 +80,15 @@ export const EventLists = () => {
     }
   };
 
+  if (selectedList || stateSelectedList) {
+    return (
+      <EventList
+        list={selectedList ?? stateSelectedList}
+        setSelectedList={setSelectedList}
+      />
+    );
+  }
+
   if (!event?.lists.length) {
     return (
       <Grid container spacing={2}>
@@ -104,7 +115,7 @@ export const EventLists = () => {
         <Card
           key={list._id}
           sx={cardStyles}
-          onClick={() => navigate(`${location.pathname}/lists/${list._id}`)}
+          onClick={() => setSelectedList(list)}
         >
           <CardContent>
             <Typography variant="h5">
