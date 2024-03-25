@@ -75,10 +75,12 @@ export const EventList = ({ list, setSelectedList }) => {
   };
 
   const handleItemDelete = (itemId: string) => {
+    console.log(itemId);
     const editedList: IEventList = {
       ...list,
       items: list.items.filter((item) => item._id !== itemId),
     };
+    console.log(editedList);
     const editedEvent = {
       ...event,
       lists: [

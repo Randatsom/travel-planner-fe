@@ -25,11 +25,7 @@ type AddItemFormProps = {
   list: IEventList;
 };
 
-export const AddItemForm = ({
-  event,
-  list,
-  setSelectedList,
-}: AddItemFormProps) => {
+export const AddItemForm = ({ event, list }: AddItemFormProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const handleCloseModal = () => dispatch(closeModal());

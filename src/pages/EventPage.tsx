@@ -4,7 +4,7 @@ import { MainInformation } from "../components/events/event-page/MainInformation
 import { EventLists } from "../components/events/event-page/lists/EventLists";
 import { useParams, useLocation } from "react-router-dom";
 import { useEvent } from "../components/events/query/queries";
-import { IEvent } from "../core/models/events";
+import { IEvent, IEventList } from "../core/models/events";
 import Loading from "../components/system/Loading";
 import { useAppDispatch } from "../utils/hooks/useAppDispatch";
 import { updateEvent } from "../core/slices/event/eventSlice";
@@ -34,7 +34,10 @@ export const EventPage = () => {
       setCurrentTabIndex={setCurrentTabIndex}
     >
       <MainInformation label="Информация" />
-      <EventLists label="Списки" stateSelectedList={selectedList} />
+      <EventLists
+        label="Списки"
+        stateSelectedList={selectedList ? data.lists[0] : null}
+      />
       <MainInformation label="Траты" />
       <MainInformation label="Заметки" />
     </CustomTabs>
