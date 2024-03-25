@@ -27,24 +27,85 @@ import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { AddItemModal } from "./add-item/AddItemModal";
 import { useSelector } from "react-redux";
 import { selectEvent } from "../../../../core/slices/event/eventSelect";
+import { useEditEvent } from "../../query/mutations";
+import { addNotification } from "../../../../core/slices/notification/notificationSlice";
+import { NotificationStatus } from "../../../../core/slices/notification/types";
 
 export const EventList = ({ list, setSelectedList }) => {
   const [checked, setChecked] = useState([0]);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const event = useSelector(selectEvent);
+  const editUserEventMutation = useEditEvent("eventInfo");
 
-  const handleToggle = (value: number) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
+  const handleToggle = (itemToCheck) => () => {
+    const editedList: IEventList = {
+      ...list,
+      items: itemToCheck.checked
+        ? [
+            { ...itemToCheck, checked: !itemToCheck.checked },
+            ...list.items.filter((item) => item._id !== itemToCheck._id),
+          ]
+        : [
+            ...list.items.filter((item) => item._id !== itemToCheck._id),
+            { ...itemToCheck, checked: !itemToCheck.checked },
+          ],
+    };
+    const editedEvent = {
+      ...event,
+      lists: [
+        editedList,
+        ...event.lists.filter(
+          (list: IEventList) => list._id !== editedList._id,
+        ),
+      ],
+    };
 
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
+    editUserEventMutation.mutate({
+      eventId: event._id,
+      data: editedEvent,
+    });
 
-    setChecked(newChecked);
+    navigate(`/events/${event._id}`, {
+      state: {
+        tabIndexToSelect: 1,
+        selectedList: editedEvent.lists[0],
+      },
+    });
+  };
+
+  const handleItemDelete = (itemId: string) => {
+    const editedList: IEventList = {
+      ...list,
+      items: list.items.filter((item) => item._id !== itemId),
+    };
+    const editedEvent = {
+      ...event,
+      lists: [
+        editedList,
+        ...event.lists.filter(
+          (list: IEventList) => list._id !== editedList._id,
+        ),
+      ],
+    };
+
+    editUserEventMutation.mutate({
+      eventId: event._id,
+      data: editedEvent,
+    });
+
+    navigate(`/events/${event._id}`, {
+      state: {
+        tabIndexToSelect: 1,
+        selectedList: editedEvent.lists[0],
+      },
+    });
+    dispatch(
+      addNotification({
+        text: "Элемент удален!",
+        status: NotificationStatus.Success,
+      }),
+    );
   };
 
   return (
@@ -81,7 +142,10 @@ export const EventList = ({ list, setSelectedList }) => {
           setSelectedList={setSelectedList}
         />
       </Stack>
-      <List sx={{ width: "100%", maxWidth: 550, bgcolor: "background.paper" }}>
+      <List
+        key={list._id}
+        sx={{ width: "100%", maxWidth: 550, bgcolor: "background.paper" }}
+      >
         {list?.items?.map((item: IEventListItems) => {
           const labelId = `checkbox-list-label-${item._id}`;
 
@@ -90,10 +154,18 @@ export const EventList = ({ list, setSelectedList }) => {
               key={item._id}
               secondaryAction={
                 <>
-                  <IconButton edge="end" aria-label="delete">
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => handleItemDelete(item._id)}
+                  >
                     <DeleteIcon />
                   </IconButton>
-                  <IconButton edge="end" aria-label="delete">
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    sx={{ marginLeft: 2 }}
+                  >
                     <PersonAddAltIcon />
                   </IconButton>
                 </>

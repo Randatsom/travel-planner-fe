@@ -64,15 +64,15 @@ export const AddItemForm = ({
     editedEvent.lists = editedEvent.lists.filter(
       (filterList: IEventList) => filterList._id !== list._id,
     );
-    editedEvent.lists = [...editedEvent.lists, foundList];
+    editedEvent.lists = [foundList, ...editedEvent.lists];
 
     return editedEvent;
   };
 
-  const onSubmit = async ({ title }: { title: string }) => {
+  const onSubmit = ({ title }: { title: string }) => {
     try {
       const editedEvent = convertRequestData(title);
-      await editUserEventMutation.mutate({
+      editUserEventMutation.mutate({
         eventId,
         data: editedEvent,
       });
@@ -81,7 +81,7 @@ export const AddItemForm = ({
       navigate(`/events/${event._id}`, {
         state: {
           tabIndexToSelect: 1,
-          selectedList: editedEvent.lists[editedEvent.lists.length - 1],
+          selectedList: editedEvent.lists[0],
         },
       });
       dispatch(
