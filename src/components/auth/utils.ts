@@ -116,6 +116,15 @@ export const addItemToListSchema = yup
   })
   .required();
 
+export const addNewListListSchema = yup
+  .object({
+    title: yup
+      .string()
+      .required(getRequiredText("хотя бы что-то"))
+      .max(14, "Для заголовка доступно 14 символов"),
+  })
+  .required();
+
 export const addDLAccountSchema = yup
   .object({
     login: yup

@@ -1,6 +1,6 @@
 import { UserType } from "../slices/auth/types";
 
-export interface IEventListItems {
+export interface IEventListItem {
   _id: string;
   title: string;
   checked: boolean;
@@ -10,7 +10,7 @@ export interface IEventList {
   _id: string;
   title: string;
   iconName: string;
-  items: IEventListItems[];
+  items: IEventListItem[];
   completed: number;
   updatedAt: string;
 }

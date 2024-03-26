@@ -3,25 +3,34 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Grid,
+  IconButton,
   Typography,
 } from "@mui/material";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import LiquorIcon from "@mui/icons-material/Liquor";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CategoryIcon from "@mui/icons-material/Category";
-import { IEvent, IEventList } from "../../../../core/models/events";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import {
+  IEvent,
+  IEventList,
+  IEventListItem,
+} from "../../../../core/models/events";
+import React, { useState } from "react";
 import { useEditEvent } from "../../query/mutations";
 import { useSelector } from "react-redux";
 import { selectEvent } from "../../../../core/slices/event/eventSelect";
 import { EventList } from "./EventList";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { useAppDispatch } from "../../../../utils/hooks/useAppDispatch";
+import { openModal } from "../../../../core/slices/modal/modalSlice";
+import { ModalId } from "../../../modal/types";
+import { AddListModal } from "./add-list/AddListModal";
 
 export const EventLists = ({ stateSelectedList }) => {
+  const dispatch = useAppDispatch();
   const [selectedList, setSelectedList] = useState(null);
-  const navigate = useNavigate();
-  const location = useLocation();
   const event: IEvent = useSelector(selectEvent);
   const cardStyles = {
     width: 250,
@@ -57,6 +66,16 @@ export const EventLists = ({ stateSelectedList }) => {
     },
     { title: "Вещи", iconName: "InventoryIcon", items: [], completed: 0 },
   ];
+
+  const getCheckedItemsPercentages = (list: IEventList) => {
+    let checkedItemsQuantity = 0;
+    list.items.forEach((item: IEventListItem) => {
+      if (item.checked) checkedItemsQuantity++;
+    });
+    return checkedItemsQuantity
+      ? (checkedItemsQuantity / list.items.length) * 100
+      : 0;
+  };
 
   const getCardIcon = (iconName: string, key: string) => {
     if (iconName) {
@@ -111,6 +130,34 @@ export const EventLists = ({ stateSelectedList }) => {
         cursor: "pointer",
       }}
     >
+      <Card sx={cardStyles}>
+        <CardContent
+          sx={{
+            height: "85%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <IconButton
+            color="primary"
+            size="large"
+            onClick={() => dispatch(openModal(ModalId.AddNewList))}
+          >
+            <AddCircleIcon
+              sx={{
+                width: 40,
+                height: 40,
+                display: "flex",
+                justifyContent: "center",
+              }}
+            />
+          </IconButton>
+          <AddListModal />
+          <Typography variant="h5">Добавить список</Typography>
+        </CardContent>
+      </Card>
       {event.lists.map((list: IEventList) => (
         <Card
           key={list._id}
@@ -122,6 +169,39 @@ export const EventLists = ({ stateSelectedList }) => {
               {getCardIcon(list.iconName, list._id)}
               {list.title}
             </Typography>
+            <Box
+              sx={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: 220,
+              }}
+            >
+              <CircularProgress
+                variant="determinate"
+                value={getCheckedItemsPercentages(list)}
+                size={120}
+              />
+              <Box
+                sx={{
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                  right: 0,
+                  position: "absolute",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  component="div"
+                  color="text.secondary"
+                >{`${getCheckedItemsPercentages(list)}%`}</Typography>
+              </Box>
+            </Box>
           </CardContent>
         </Card>
       ))}

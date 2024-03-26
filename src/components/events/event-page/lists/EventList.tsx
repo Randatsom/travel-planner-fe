@@ -3,7 +3,7 @@ import { useAppDispatch } from "../../../../utils/hooks/useAppDispatch";
 import {
   IEvent,
   IEventList,
-  IEventListItems,
+  IEventListItem,
 } from "../../../../core/models/events";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -148,7 +148,7 @@ export const EventList = ({ list, setSelectedList }) => {
         key={list._id}
         sx={{ width: "100%", maxWidth: 550, bgcolor: "background.paper" }}
       >
-        {list?.items?.map((item: IEventListItems) => {
+        {list?.items?.map((item: IEventListItem) => {
           const labelId = `checkbox-list-label-${item._id}`;
 
           return (
