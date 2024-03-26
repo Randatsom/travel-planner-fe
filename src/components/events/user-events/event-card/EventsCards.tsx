@@ -169,7 +169,7 @@ const EventsCards = ({ events }) => {
                       Участники:
                     </Typography>
                     <UserInlineAvatars
-                      attendees={[user, ...ev.attendees]}
+                      attendees={[ev.user, ...ev.attendees]}
                       maxAvatars={4}
                     />
                   </>

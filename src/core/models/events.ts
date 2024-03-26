@@ -1,3 +1,5 @@
+import { UserType } from "../slices/auth/types";
+
 export interface IEventListItems {
   _id: string;
   title: string;
@@ -20,4 +22,5 @@ export interface IEvent {
   attendees: any[];
   completed: boolean;
   lists: IEventList[];
+  user: UserType;
 }
