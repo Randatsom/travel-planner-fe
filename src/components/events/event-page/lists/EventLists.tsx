@@ -73,7 +73,7 @@ export const EventLists = ({ stateSelectedList }) => {
       if (item.checked) checkedItemsQuantity++;
     });
     return checkedItemsQuantity
-      ? (checkedItemsQuantity / list.items.length) * 100
+      ? ((checkedItemsQuantity / list.items.length) * 100).toFixed(0)
       : 0;
   };
 

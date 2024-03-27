@@ -19,6 +19,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { addNotification } from "../../../../../core/slices/notification/notificationSlice";
 import { NotificationStatus } from "../../../../../core/slices/notification/types";
 import { handleError } from "../../../../../utils/errors";
+import { sortItems } from "../../../utils";
 
 type AddItemFormProps = {
   event: IEvent;
@@ -54,7 +55,7 @@ export const AddItemForm = ({ event, list }: AddItemFormProps) => {
         (foundList: IEventList) => foundList._id === list._id,
       ),
     };
-    foundList.items = [...foundList.items, ...listItems];
+    foundList.items = sortItems([...foundList.items, ...listItems]);
 
     const editedEvent = { ...event };
     editedEvent.lists = editedEvent.lists.filter(

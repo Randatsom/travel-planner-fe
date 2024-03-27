@@ -30,6 +30,7 @@ import { selectEvent } from "../../../../core/slices/event/eventSelect";
 import { useEditEvent } from "../../query/mutations";
 import { addNotification } from "../../../../core/slices/notification/notificationSlice";
 import { NotificationStatus } from "../../../../core/slices/notification/types";
+import { sortItems } from "../../utils";
 
 export const EventList = ({ list, setSelectedList }) => {
   const [checked, setChecked] = useState([0]);
@@ -41,16 +42,13 @@ export const EventList = ({ list, setSelectedList }) => {
   const handleToggle = (itemToCheck) => () => {
     const editedList: IEventList = {
       ...list,
-      items: itemToCheck.checked
-        ? [
-            { ...itemToCheck, checked: !itemToCheck.checked },
-            ...list.items.filter((item) => item._id !== itemToCheck._id),
-          ]
-        : [
-            ...list.items.filter((item) => item._id !== itemToCheck._id),
-            { ...itemToCheck, checked: !itemToCheck.checked },
-          ],
+      items: [
+        { ...itemToCheck, checked: !itemToCheck.checked },
+        ...list.items.filter((item) => item._id !== itemToCheck._id),
+      ],
     };
+    editedList.items = sortItems(editedList.items);
+
     const editedEvent = {
       ...event,
       lists: [
