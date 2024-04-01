@@ -1,7 +1,7 @@
 import TextFieldController from "../../../../forms/textField/TextFieldController";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { addNewListListSchema } from "../../../../auth/utils";
+import { addNewListSchema } from "../../../../auth/utils";
 import { closeModal } from "../../../../../core/slices/modal/modalSlice";
 import { useAppDispatch } from "../../../../../utils/hooks/useAppDispatch";
 import { Button, Grid, Stack } from "@mui/material";
@@ -18,7 +18,7 @@ export const AddListForm = () => {
   const editUserEventMutation = useEditEvent("eventInfo");
   const { handleSubmit, control, formState } = useForm({
     mode: "onChange",
-    resolver: yupResolver(addNewListListSchema),
+    resolver: yupResolver(addNewListSchema),
   });
 
   const onSubmit = ({ title }) => {
@@ -36,8 +36,13 @@ export const AddListForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} id="add-new-list">
       <Grid container spacing={2}>
         <Grid item xs={6}>
-          <Stack direction="column" spacing={2}>
-            <TextFieldController control={control} name="title" />
+          <Stack direction="column" spacing={2} sx={{ marginTop: "3px" }}>
+            <TextFieldController
+              control={control}
+              name="title"
+              label="Название списка"
+              type="text"
+            />
 
             <Button
               type="submit"

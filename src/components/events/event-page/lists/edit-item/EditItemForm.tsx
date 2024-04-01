@@ -1,7 +1,11 @@
 import { useAppDispatch } from "../../../../../utils/hooks/useAppDispatch";
 import { closeModal } from "../../../../../core/slices/modal/modalSlice";
 import { useForm } from "react-hook-form";
-import { IEvent, IEventList } from "../../../../../core/models/events";
+import {
+  IEvent,
+  IEventList,
+  IEventListItem,
+} from "../../../../../core/models/events";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { addItemToListSchema } from "../../../../auth/utils";
 import TextFieldController from "../../../../forms/textField/TextFieldController";
@@ -26,24 +30,28 @@ import { selectCurrentUser } from "../../../../../core/slices/auth/authSelector"
 import { selectUsers } from "../../../../../core/slices/users/usersSelector";
 import { UserType } from "../../../../../core/slices/auth/types";
 
-type AddItemFormProps = {
+type EditItemFormProps = {
   event: IEvent;
   list: IEventList;
+  item: IEventListItem;
 };
 
-export const AddItemForm = ({ event, list }: AddItemFormProps) => {
+export const EditItemForm = ({ event, list, item }: EditItemFormProps) => {
   const user = useSelector(selectCurrentUser);
   const users = useSelector(selectUsers);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const handleCloseModal = () => dispatch(closeModal());
-  const [isSwitchChecked, setIsSwitchChecked] = useState(true);
   const { eventId } = useParams();
   const editUserEventMutation = useEditEvent("eventInfo");
 
   const { handleSubmit, control, formState } = useForm<IEvent>({
     mode: "onChange",
     resolver: yupResolver(addItemToListSchema),
+    defaultValues: {
+      title: item.title,
+      assignees: item.assignees.map((assignee: UserType) => assignee._id),
+    },
   });
 
   const convertRequestData = ({
@@ -53,31 +61,25 @@ export const AddItemForm = ({ event, list }: AddItemFormProps) => {
     title: string;
     assignees: string[];
   }) => {
-    let listItems = [];
     const mappedAssignees = assignees.map((assigneeId: string) =>
       users.find((user: UserType) => user._id === assigneeId),
     );
-    if (isSwitchChecked) {
-      title.split(",").forEach((el: string) => {
-        el = el.trim();
-        listItems = [
-          ...listItems,
-          { title: el, checked: false, assignees: mappedAssignees },
-        ];
-      });
-    } else {
-      listItems = [
-        ...listItems,
-        { title: title, checked: false, assignees: mappedAssignees },
-      ];
-    }
+
+    const updatedItem = { ...item, title, assignees: mappedAssignees };
 
     let foundList = {
       ...event.lists.find(
         (foundList: IEventList) => foundList._id === list._id,
       ),
     };
-    foundList.items = sortItems([...foundList.items, ...listItems]);
+    foundList.items = foundList.items.map((mapItem: IEventListItem) => {
+      if (mapItem._id === item._id) {
+        return updatedItem;
+      }
+
+      return mapItem;
+    });
+    foundList.items = sortItems([...foundList.items]);
 
     const editedEvent = { ...event };
     editedEvent.lists = editedEvent.lists.filter(
@@ -104,7 +106,7 @@ export const AddItemForm = ({ event, list }: AddItemFormProps) => {
       });
       dispatch(
         addNotification({
-          text: "Элементы добавлены!",
+          text: "Элементы обновлен!",
           status: NotificationStatus.Success,
         }),
       );
@@ -113,39 +115,16 @@ export const AddItemForm = ({ event, list }: AddItemFormProps) => {
     }
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} id="add-item-to-event-list">
+    <form onSubmit={handleSubmit(onSubmit)} id="edit-item-event-list">
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Stack direction="column" spacing={2} sx={{ marginTop: "3px" }}>
-            <Tooltip title="При включенной функции надо прописывать элементы через запятую. Все они будут разбиты на отдельные элементы списка">
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={isSwitchChecked}
-                    onChange={(event) =>
-                      setIsSwitchChecked(event.target.checked)
-                    }
-                  />
-                }
-                label="Быстрое создание элементов"
-              />
-            </Tooltip>
-            {isSwitchChecked && (
-              <TextFieldController
-                label="Перечисление элементов"
-                name="title"
-                multiline
-                control={control}
-              />
-            )}
-            {!isSwitchChecked && (
-              <TextFieldController
-                label="Краткое описание"
-                name="title"
-                multiline
-                control={control}
-              />
-            )}
+            <TextFieldController
+              label="Название"
+              name="title"
+              multiline
+              control={control}
+            />
             <SelectController
               name="assignees"
               label="Назначить на"

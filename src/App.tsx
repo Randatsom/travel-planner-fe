@@ -11,14 +11,24 @@ import { checkAuth, logout } from "./core/slices/auth/authSlice";
 import { routes } from "./routes/routes";
 import paths from "./routes/paths";
 import "./App.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const queryClient = new QueryClient();
+import { useQuery } from "@tanstack/react-query";
+import { IEvent } from "./core/models/events";
+import UsersService from "./services/UsersService";
+import { updateUsers } from "./core/slices/users/usersSlice";
 
 const App = () => {
   const isLoading = useSelector(selectIsUserLoading);
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const dispatch = useAppDispatch();
+
+  const allUsersQuery = useQuery<IEvent[]>({
+    queryKey: ["allUsers"],
+    queryFn: () => UsersService.getAllUsers(),
+  });
+
+  useEffect(() => {
+    dispatch(updateUsers(allUsersQuery.data));
+  }, [dispatch, allUsersQuery.data]);
 
   useEffect(() => {
     async function fetchData() {
@@ -72,9 +82,7 @@ const App = () => {
                   />
                 ) : (
                   <Layout {...layoutProps}>
-                    <QueryClientProvider client={queryClient}>
-                      <Component />
-                    </QueryClientProvider>
+                    <Component />
                   </Layout>
                 )
               }

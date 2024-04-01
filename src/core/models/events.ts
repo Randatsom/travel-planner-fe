@@ -4,6 +4,7 @@ export interface IEventListItem {
   _id: string;
   title: string;
   checked: boolean;
+  assignees: UserType[];
 }
 
 export interface IEventList {

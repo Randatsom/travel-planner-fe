@@ -5,7 +5,10 @@ export enum ModalId {
   EditUserEvent = "edit-user-event",
   DeleteUserEvent = "delete-user-event",
   AddItemToEventList = "add-item-to-event-list",
+  EditItemEventList = "edit-item-event-list",
   AddNewList = "add-new-list",
+  EditEventList = "edit-event-list",
+  DeleteEventList = "delete-event-list",
 }
 
 export type ModalData = {

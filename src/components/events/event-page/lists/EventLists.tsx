@@ -67,13 +67,13 @@ export const EventLists = ({ stateSelectedList }) => {
     { title: "Вещи", iconName: "InventoryIcon", items: [], completed: 0 },
   ];
 
-  const getCheckedItemsPercentages = (list: IEventList) => {
+  const getCheckedItemsPercentages = (list: IEventList): number => {
     let checkedItemsQuantity = 0;
     list.items.forEach((item: IEventListItem) => {
       if (item.checked) checkedItemsQuantity++;
     });
     return checkedItemsQuantity
-      ? ((checkedItemsQuantity / list.items.length) * 100).toFixed(0)
+      ? Number(((checkedItemsQuantity / list.items.length) * 100).toFixed(0))
       : 0;
   };
 

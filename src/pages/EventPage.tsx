@@ -4,7 +4,7 @@ import { MainInformation } from "../components/events/event-page/MainInformation
 import { EventLists } from "../components/events/event-page/lists/EventLists";
 import { useParams, useLocation } from "react-router-dom";
 import { useEvent } from "../components/events/query/queries";
-import { IEvent, IEventList } from "../core/models/events";
+import { IEvent } from "../core/models/events";
 import Loading from "../components/system/Loading";
 import { useAppDispatch } from "../utils/hooks/useAppDispatch";
 import { updateEvent } from "../core/slices/event/eventSlice";

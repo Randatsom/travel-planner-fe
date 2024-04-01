@@ -116,7 +116,22 @@ export const addItemToListSchema = yup
   })
   .required();
 
-export const addNewListListSchema = yup
+export const deleteEventListSchema = (listTitle) => {
+  return yup
+    .object({
+      title: yup
+        .string()
+        .required(getRequiredText("хотя бы что-то"))
+        .test(
+          "title-match",
+          "Значение поля должно совпадать с указанным выше",
+          (value) => value === listTitle,
+        ),
+    })
+    .required();
+};
+
+export const addNewListSchema = yup
   .object({
     title: yup
       .string()
