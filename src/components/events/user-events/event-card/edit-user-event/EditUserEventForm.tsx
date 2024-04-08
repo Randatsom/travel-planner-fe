@@ -10,7 +10,7 @@ import { NotificationStatus } from "../../../../../core/slices/notification/type
 import { handleError } from "../../../../../utils/errors";
 import { closeModal } from "../../../../../core/slices/modal/modalSlice";
 import EventsService from "../../../../../services/eventsService";
-import { attendeesSelectOptions } from "../../../utils";
+import { attendeesSelectOptionsWithoutCurrentUser } from "../../../utils";
 import SelectController from "../../../../forms/textField/SelectController";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../../../core/slices/auth/authSelector";
@@ -74,7 +74,10 @@ const EditUserEventForm = ({ event }: CreateEventFormProps) => {
             <SelectController
               name="attendees"
               label="Участники"
-              options={attendeesSelectOptions(users, user._id)}
+              options={attendeesSelectOptionsWithoutCurrentUser(
+                users,
+                user._id,
+              )}
               control={control}
               multiple
             />

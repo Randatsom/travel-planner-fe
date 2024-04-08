@@ -1,7 +1,7 @@
 import { UserType } from "../../core/slices/auth/types";
 import { IEventListItem } from "../../core/models/events";
 
-export const attendeesSelectOptions = (
+export const attendeesSelectOptionsWithoutCurrentUser = (
   allUsers: UserType[],
   currentUserId: string,
 ) => {
@@ -12,6 +12,15 @@ export const attendeesSelectOptions = (
         value: user._id,
         label: user.username,
       })) || []
+  );
+};
+
+export const attendeesSelectOptions = (allUsers: UserType[]) => {
+  return (
+    allUsers?.map((user: UserType) => ({
+      value: user._id,
+      label: user.username,
+    })) || []
   );
 };
 

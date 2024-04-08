@@ -23,7 +23,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { addNotification } from "../../../../../core/slices/notification/notificationSlice";
 import { NotificationStatus } from "../../../../../core/slices/notification/types";
 import { handleError } from "../../../../../utils/errors";
-import { attendeesSelectOptions, sortItems } from "../../../utils";
+import {
+  attendeesSelectOptions,
+  attendeesSelectOptionsWithoutCurrentUser,
+  sortItems,
+} from "../../../utils";
 import SelectController from "../../../../forms/textField/SelectController";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../../../core/slices/auth/authSelector";
@@ -128,7 +132,7 @@ export const EditItemForm = ({ event, list, item }: EditItemFormProps) => {
             <SelectController
               name="assignees"
               label="Назначить на"
-              options={attendeesSelectOptions(users, user._id)}
+              options={attendeesSelectOptions(users)}
               control={control}
               multiple
             />

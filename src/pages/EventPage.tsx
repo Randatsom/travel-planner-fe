@@ -1,6 +1,6 @@
 import CustomTabs from "../components/tabs/CustomTabs";
 import React, { useEffect } from "react";
-import { MainInformation } from "../components/events/event-page/MainInformation";
+import { MainInformation } from "../components/events/event-page/main-information/MainInformation";
 import { EventLists } from "../components/events/event-page/lists/EventLists";
 import { useParams, useLocation } from "react-router-dom";
 import { useEvent } from "../components/events/query/queries";

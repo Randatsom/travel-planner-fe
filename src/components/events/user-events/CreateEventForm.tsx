@@ -10,7 +10,7 @@ import { NotificationStatus } from "../../../core/slices/notification/types";
 import { handleError } from "../../../utils/errors";
 import EventsService from "../../../services/eventsService";
 import SelectController from "../../forms/textField/SelectController";
-import { attendeesSelectOptions } from "../utils";
+import { attendeesSelectOptionsWithoutCurrentUser } from "../utils";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../core/slices/auth/authSelector";
 import { useCreateEvent } from "../query/mutations";
@@ -62,7 +62,10 @@ const CreateEventForm = ({ setCurrentTabIndex }) => {
             <SelectController
               name="attendees"
               label="Участники"
-              options={attendeesSelectOptions(users, user._id)}
+              options={attendeesSelectOptionsWithoutCurrentUser(
+                users,
+                user._id,
+              )}
               control={control}
               multiple
             />
