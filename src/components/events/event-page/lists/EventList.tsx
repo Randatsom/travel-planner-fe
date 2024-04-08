@@ -28,7 +28,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { AddItemModal } from "./add-item/AddItemModal";
 import { useSelector } from "react-redux";
 import { selectEvent } from "../../../../core/slices/event/eventSelect";
-import { useEditEvent } from "../../query/mutations";
+import { useEditEventWithoutUpdate } from "../../query/mutations";
 import { addNotification } from "../../../../core/slices/notification/notificationSlice";
 import { NotificationStatus } from "../../../../core/slices/notification/types";
 import { sortItems } from "../../utils";
@@ -41,10 +41,11 @@ import { DeleteListModal } from "./delete-list/DeleteListModal";
 
 export const EventList = ({ list, setSelectedList }) => {
   const [selectedItem, setSelectedItem] = useState<IEventListItem | null>(null);
+  const [localList, setLocalList] = useState<IEventList | null>(list);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const event = useSelector(selectEvent);
-  const editUserEventMutation = useEditEvent("eventInfo");
+  const editUserEventMutation = useEditEventWithoutUpdate();
 
   const actions = [
     {
@@ -98,13 +99,15 @@ export const EventList = ({ list, setSelectedList }) => {
 
   const handleToggle = (itemToCheck) => () => {
     const editedList: IEventList = {
-      ...list,
+      ...localList,
       items: [
         { ...itemToCheck, checked: !itemToCheck.checked },
-        ...list.items.filter((item) => item._id !== itemToCheck._id),
+        ...localList?.items.filter((item) => item._id !== itemToCheck._id),
       ],
     };
     editedList.items = sortItems(editedList.items);
+
+    setLocalList(editedList);
 
     const editedEvent = {
       ...event,
@@ -119,13 +122,6 @@ export const EventList = ({ list, setSelectedList }) => {
     editUserEventMutation.mutate({
       eventId: event._id,
       data: editedEvent,
-    });
-
-    navigate(`/events/${event._id}`, {
-      state: {
-        tabIndexToSelect: 1,
-        selectedList: editedEvent.lists[0],
-      },
     });
   };
 
@@ -203,16 +199,16 @@ export const EventList = ({ list, setSelectedList }) => {
             ))}
           </StyledSpeedDial>
         </Box>
-        <EditListModal list={list} event={event} />
-        <DeleteListModal list={list} event={event} />
+        <EditListModal list={localList} event={event} />
+        <DeleteListModal list={localList} event={event} />
         <AddItemModal
           event={event}
-          list={list}
+          list={localList}
           setSelectedList={setSelectedList}
         />
       </Stack>
       <List
-        key={list._id}
+        key={localList?._id}
         sx={{
           width: "100%",
           maxWidth: 550,
@@ -221,7 +217,7 @@ export const EventList = ({ list, setSelectedList }) => {
           overflow: "auto",
         }}
       >
-        {list?.items?.map((item: IEventListItem) => {
+        {localList?.items?.map((item: IEventListItem) => {
           const labelId = `checkbox-list-label-${item._id}`;
 
           return (
@@ -281,7 +277,7 @@ export const EventList = ({ list, setSelectedList }) => {
               </ListItemButton>
               <EditItemModal
                 event={event}
-                list={list}
+                list={localList}
                 item={selectedItem}
                 setSelectedList={setSelectedList}
               />

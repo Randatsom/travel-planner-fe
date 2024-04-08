@@ -6,7 +6,7 @@ export const EditItemModal = ({ event, list, setSelectedList, item }) => {
   return (
     <Modal
       modalId={ModalId.EditItemEventList}
-      title={`Добавление элемента в ${list.title}`}
+      title={`Добавление элемента в ${list?.title}`}
     >
       <EditItemForm
         list={list}

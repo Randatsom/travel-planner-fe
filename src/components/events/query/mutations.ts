@@ -31,6 +31,18 @@ export function useEditEvent(queryKey: string) {
   });
 }
 
+export function useEditEventWithoutUpdate() {
+  return useMutation({
+    mutationFn: ({ eventId, data }: { eventId: string; data: IEvent }) =>
+      EventsService.editEvent(eventId, data),
+    onSettled: async (_, error) => {
+      if (error) {
+        console.log(error);
+      }
+    },
+  });
+}
+
 export function useDeleteEvent() {
   const queryClient = useQueryClient();
   return useMutation({

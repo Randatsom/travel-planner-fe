@@ -12,7 +12,7 @@ export const EditListModal = ({ list, event }: EditListModalProps) => {
   return (
     <Modal
       modalId={ModalId.EditEventList}
-      title={`Редактирование списка "${list.title}"`}
+      title={`Редактирование списка "${list?.title}"`}
     >
       <EditListForm list={list} event={event} />
     </Modal>
