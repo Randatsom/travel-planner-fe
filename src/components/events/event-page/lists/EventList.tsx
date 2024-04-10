@@ -59,6 +59,10 @@ export const EventList = () => {
   const editListMutation = useUpdateEventList();
   const editListWithoutUpdateMutation = useUpdateEventListWithoutUpdate();
 
+  React.useEffect(() => {
+    setLocalList(data)
+  }, [data])
+
   const actions = [
     {
       icon: (
