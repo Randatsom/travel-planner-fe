@@ -9,28 +9,14 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import { addItemToListSchema } from "../../../../auth/utils";
 import TextFieldController from "../../../../forms/textField/TextFieldController";
-import {
-  Button,
-  FormControlLabel,
-  Grid,
-  Stack,
-  Switch,
-  Tooltip,
-} from "@mui/material";
-import { useState } from "react";
-import { useEditEvent } from "../../../query/mutations";
-import { useParams, useNavigate } from "react-router-dom";
+import { Button, Grid, Stack } from "@mui/material";
+import { useUpdateEventList } from "../../../query/mutations";
 import { addNotification } from "../../../../../core/slices/notification/notificationSlice";
 import { NotificationStatus } from "../../../../../core/slices/notification/types";
 import { handleError } from "../../../../../utils/errors";
-import {
-  attendeesSelectOptions,
-  attendeesSelectOptionsWithoutCurrentUser,
-  sortItems,
-} from "../../../utils";
+import { attendeesSelectOptions } from "../../../utils";
 import SelectController from "../../../../forms/textField/SelectController";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../../../../core/slices/auth/authSelector";
 import { selectUsers } from "../../../../../core/slices/users/usersSelector";
 import { UserType } from "../../../../../core/slices/auth/types";
 
@@ -41,13 +27,10 @@ type EditItemFormProps = {
 };
 
 export const EditItemForm = ({ event, list, item }: EditItemFormProps) => {
-  const user = useSelector(selectCurrentUser);
   const users = useSelector(selectUsers);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const handleCloseModal = () => dispatch(closeModal());
-  const { eventId } = useParams();
-  const editUserEventMutation = useEditEvent("eventInfo");
+  const editListMutation = useUpdateEventList();
 
   const { handleSubmit, control, formState } = useForm<IEvent>({
     mode: "onChange",
@@ -71,43 +54,27 @@ export const EditItemForm = ({ event, list, item }: EditItemFormProps) => {
 
     const updatedItem = { ...item, title, assignees: mappedAssignees };
 
-    let foundList = {
-      ...event.lists.find(
-        (foundList: IEventList) => foundList._id === list._id,
-      ),
-    };
-    foundList.items = foundList.items.map((mapItem: IEventListItem) => {
+    let listToUpdate = { ...list };
+    listToUpdate.items = listToUpdate.items.map((mapItem: IEventListItem) => {
       if (mapItem._id === item._id) {
         return updatedItem;
       }
 
       return mapItem;
     });
-    foundList.items = sortItems([...foundList.items]);
 
-    const editedEvent = { ...event };
-    editedEvent.lists = editedEvent.lists.filter(
-      (filterList: IEventList) => filterList._id !== list._id,
-    );
-    editedEvent.lists = [foundList, ...editedEvent.lists];
-
-    return editedEvent;
+    return listToUpdate;
   };
 
   const onSubmit = (data: { title: string; assignees: string[] }) => {
     try {
-      const editedEvent = convertRequestData(data);
-      editUserEventMutation.mutate({
-        eventId,
-        data: editedEvent,
+      const editedList = convertRequestData(data);
+      editListMutation.mutate({
+        eventId: event._id,
+        listId: list._id,
+        data: editedList,
       });
       handleCloseModal();
-      navigate(`/events/${event._id}`, {
-        state: {
-          tabIndexToSelect: 1,
-          selectedList: editedEvent.lists[0],
-        },
-      });
       dispatch(
         addNotification({
           text: "Элементы обновлен!",
@@ -122,7 +89,7 @@ export const EditItemForm = ({ event, list, item }: EditItemFormProps) => {
     <form onSubmit={handleSubmit(onSubmit)} id="edit-item-event-list">
       <Grid container spacing={2}>
         <Grid item xs={8}>
-          <Stack direction="column" spacing={2} sx={{ marginTop: "3px" }}>
+          <Stack direction="column" spacing={2} sx={{ marginTop: "4px" }}>
             <TextFieldController
               label="Название"
               name="title"
@@ -145,7 +112,7 @@ export const EditItemForm = ({ event, list, item }: EditItemFormProps) => {
             color="primary"
             disabled={formState.isSubmitting}
           >
-            Добавить
+            Изменить
           </Button>
         </Grid>
       </Grid>

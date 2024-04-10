@@ -38,10 +38,8 @@ export const AddItemForm = ({ event, list }: AddItemFormProps) => {
   const user = useSelector(selectCurrentUser);
   const users = useSelector(selectUsers);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const handleCloseModal = () => dispatch(closeModal());
   const [isSwitchChecked, setIsSwitchChecked] = useState(true);
-  const { eventId } = useParams();
   const editListMutation = useUpdateEventList();
 
   const { handleSubmit, control, formState } = useForm<IEvent>({

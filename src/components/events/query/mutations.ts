@@ -86,3 +86,15 @@ export function useUpdateEventList() {
     },
   });
 }
+
+export function useUpdateEventListWithoutUpdate() {
+  return useMutation({
+    mutationFn: ({ eventId, listId, data }) =>
+        EventsService.updateListById(eventId, listId, data),
+    onSettled: async (_, error) => {
+      if (error) {
+        console.log(error);
+      }
+    },
+  });
+}

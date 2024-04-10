@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useAppDispatch } from "../../../../utils/hooks/useAppDispatch";
 import { IEventList, IEventListItem } from "../../../../core/models/events";
 import { useNavigate, useParams } from "react-router-dom";
@@ -28,7 +28,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { AddItemModal } from "./add-item/AddItemModal";
 import { useSelector } from "react-redux";
 import { selectEvent } from "../../../../core/slices/event/eventSelect";
-import { useEditEventWithoutUpdate } from "../../query/mutations";
+import {useEditEventWithoutUpdate, useUpdateEventList, useUpdateEventListWithoutUpdate} from "../../query/mutations";
 import { addNotification } from "../../../../core/slices/notification/notificationSlice";
 import { NotificationStatus } from "../../../../core/slices/notification/types";
 import { sortItems } from "../../utils";
@@ -43,11 +43,21 @@ import Loading from "../../../system/Loading";
 
 export const EventList = () => {
   const { eventId, listId } = useParams();
-  const event = useSelector(selectEvent);
+  const [selectedItem, setSelectedItem] = React.useState<IEventListItem | null>(
+    null,
+  );
+
+  const event =
+    useSelector(selectEvent) ??
+    JSON.parse(localStorage.getItem("currentEvent"));
+  const [localList, setLocalList] = React.useState<IEventList | null>(
+      event.lists.find((list => list._id === listId)),
+  );
   const { isLoading, data } = useList(eventId, listId);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const editUserEventMutation = useEditEventWithoutUpdate();
+  const editListMutation = useUpdateEventList();
+  const editListWithoutUpdateMutation = useUpdateEventListWithoutUpdate();
 
   const actions = [
     {
@@ -109,19 +119,12 @@ export const EventList = () => {
     };
     editedList.items = sortItems(editedList.items);
 
-    const editedEvent = {
-      ...event,
-      lists: [
-        editedList,
-        ...event.lists.filter(
-          (list: IEventList) => list._id !== editedList._id,
-        ),
-      ],
-    };
+    setLocalList(editedList)
 
-    editUserEventMutation.mutate({
-      eventId: event._id,
-      data: editedEvent,
+    editListWithoutUpdateMutation.mutate({
+      eventId,
+      listId,
+      data: editedList,
     });
   };
 
@@ -130,27 +133,14 @@ export const EventList = () => {
       ...data,
       items: data.items.filter((item) => item._id !== itemId),
     };
-    const editedEvent = {
-      ...event,
-      lists: [
-        editedList,
-        ...event.lists.filter(
-          (list: IEventList) => list._id !== editedList._id,
-        ),
-      ],
-    };
 
-    editUserEventMutation.mutate({
-      eventId: event._id,
-      data: editedEvent,
+
+    editListMutation.mutate({
+      eventId,
+      listId,
+      data: editedList,
     });
 
-    navigate(`/events/${event._id}`, {
-      state: {
-        tabIndexToSelect: 1,
-        selectedList: editedEvent.lists[0],
-      },
-    });
     dispatch(
       addNotification({
         text: "Элемент удален!",
@@ -217,7 +207,7 @@ export const EventList = () => {
           overflow: "auto",
         }}
       >
-        {data?.items?.map((item: IEventListItem) => {
+        {localList?.items?.map((item: IEventListItem) => {
           const labelId = `checkbox-list-label-${item._id}`;
 
           return (
@@ -241,6 +231,7 @@ export const EventList = () => {
                     aria-label="delete"
                     sx={{ marginLeft: 2 }}
                     onClick={() => {
+                      setSelectedItem(item);
                       dispatch(openModal(ModalId.EditItemEventList));
                     }}
                   >
@@ -274,7 +265,7 @@ export const EventList = () => {
                 </ListItemIcon>
                 <ListItemText id={labelId} primary={`${item.title}`} />
               </ListItemButton>
-              <EditItemModal event={event} list={data} />
+              <EditItemModal event={event} list={data} item={selectedItem} />
             </ListItem>
           );
         })}

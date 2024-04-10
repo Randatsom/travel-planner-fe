@@ -27,7 +27,9 @@ type userListsInfoType = {
 };
 
 export const ListsInfo = () => {
-  const event = useSelector(selectEvent);
+  const event =
+    useSelector(selectEvent) ??
+    JSON.parse(localStorage.getItem("currentEvent"));
   const user = useSelector(selectCurrentUser);
   const editUserEventMutation = useEditEvent("eventInfo");
 

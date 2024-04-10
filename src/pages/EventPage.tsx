@@ -20,7 +20,10 @@ export const EventPage = () => {
   const { data, isPending }: { data: IEvent } = useEvent(eventId);
 
   useEffect(() => {
-    dispatch(updateEvent(data));
+    if (data) {
+      dispatch(updateEvent(data));
+      localStorage.setItem("currentEvent", JSON.stringify(data));
+    }
   }, [dispatch, data]);
 
   if (isPending) {

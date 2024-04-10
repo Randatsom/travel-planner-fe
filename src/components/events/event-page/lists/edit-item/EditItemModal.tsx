@@ -1,19 +1,25 @@
 import { ModalId } from "../../../../modal/types";
 import Modal from "../../../../modal/Modal";
 import { EditItemForm } from "./EditItemForm";
+import {
+  IEvent,
+  IEventList,
+  IEventListItem,
+} from "../../../../../core/models/events";
 
-export const EditItemModal = ({ event, list, setSelectedList, item }) => {
+type EditItemModalProps = {
+  event: IEvent;
+  list: IEventList;
+  item: IEventListItem;
+};
+
+export const EditItemModal = ({ event, list, item }: EditItemModalProps) => {
   return (
     <Modal
       modalId={ModalId.EditItemEventList}
-      title={`Добавление элемента в ${list?.title}`}
+      title={`Изменение элемента ${item?.title}`}
     >
-      <EditItemForm
-        list={list}
-        event={event}
-        item={item}
-        setSelectedList={setSelectedList}
-      />
+      <EditItemForm list={list} event={event} item={item} />
     </Modal>
   );
 };

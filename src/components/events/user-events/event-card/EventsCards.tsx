@@ -21,11 +21,8 @@ import { ModalId } from "../../../modal/types";
 import DeleteUserEventModal from "./delete-user-event/DeleteUserEventModal";
 import { useLocation } from "react-router-dom";
 import { UserInlineAvatars } from "../../../shared/UserInlineAvatars";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../../../../core/slices/auth/authSelector";
 import { useEditEvent } from "../../query/mutations";
 import { useNavigate } from "react-router-dom";
-import { selectUsers } from "../../../../core/slices/users/usersSelector";
 
 const EventsCards = ({ events }) => {
   const navigate = useNavigate();
@@ -34,8 +31,6 @@ const EventsCards = ({ events }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const location = useLocation();
   const isCurrentPathnameParticipation = location.pathname === "/participation";
-  const user = useSelector(selectCurrentUser);
-  const users = useSelector(selectUsers);
   const editUserEventMutation = useEditEvent("events");
 
   const handleMenuClick = (event, ev) => {
