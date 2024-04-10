@@ -110,11 +110,12 @@ export const EventList = () => {
   }));
 
   const handleToggle = (itemToCheck) => () => {
+    console.log(itemToCheck)
     const editedList: IEventList = {
-      ...data,
+      ...localList,
       items: [
         { ...itemToCheck, checked: !itemToCheck.checked },
-        ...data?.items.filter((item) => item._id !== itemToCheck._id),
+        ...localList?.items.filter((item) => item._id !== itemToCheck._id),
       ],
     };
     editedList.items = sortItems(editedList.items);
