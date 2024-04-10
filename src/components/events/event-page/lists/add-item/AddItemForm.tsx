@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useState } from "react";
-import { useEditEvent } from "../../../query/mutations";
+import { useEditEvent, useUpdateEventList } from "../../../query/mutations";
 import { useParams, useNavigate } from "react-router-dom";
 import { addNotification } from "../../../../../core/slices/notification/notificationSlice";
 import { NotificationStatus } from "../../../../../core/slices/notification/types";
@@ -42,7 +42,7 @@ export const AddItemForm = ({ event, list }: AddItemFormProps) => {
   const handleCloseModal = () => dispatch(closeModal());
   const [isSwitchChecked, setIsSwitchChecked] = useState(true);
   const { eventId } = useParams();
-  const editUserEventMutation = useEditEvent("eventInfo");
+  const editListMutation = useUpdateEventList();
 
   const { handleSubmit, control, formState } = useForm<IEvent>({
     mode: "onChange",
@@ -75,36 +75,21 @@ export const AddItemForm = ({ event, list }: AddItemFormProps) => {
       ];
     }
 
-    let foundList = {
-      ...event.lists.find(
-        (foundList: IEventList) => foundList._id === list._id,
-      ),
-    };
-    foundList.items = sortItems([...foundList.items, ...listItems]);
+    let listToUpdate = { ...list };
+    listToUpdate.items = sortItems([...listToUpdate.items, ...listItems]);
 
-    const editedEvent = { ...event };
-    editedEvent.lists = editedEvent.lists.filter(
-      (filterList: IEventList) => filterList._id !== list._id,
-    );
-    editedEvent.lists = [foundList, ...editedEvent.lists];
-
-    return editedEvent;
+    return listToUpdate;
   };
 
   const onSubmit = (data: { title: string; assignees: string[] }) => {
     try {
       const editedEvent = convertRequestData(data);
-      editUserEventMutation.mutate({
-        eventId,
+      editListMutation.mutate({
+        eventId: event._id,
+        listId: list._id,
         data: editedEvent,
       });
       handleCloseModal();
-      navigate(`/events/${event._id}`, {
-        state: {
-          tabIndexToSelect: 1,
-          selectedList: editedEvent.lists[0],
-        },
-      });
       dispatch(
         addNotification({
           text: "Элементы добавлены!",

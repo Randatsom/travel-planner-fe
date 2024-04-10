@@ -1,7 +1,7 @@
 import { useAppDispatch } from "../../../../../utils/hooks/useAppDispatch";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEditEvent } from "../../../query/mutations";
+import { useDeleteEventList } from "../../../query/mutations";
 import { closeModal } from "../../../../../core/slices/modal/modalSlice";
 import { IEvent, IEventList } from "../../../../../core/models/events";
 import { addNotification } from "../../../../../core/slices/notification/notificationSlice";
@@ -24,24 +24,14 @@ export const DeleteListForm = ({ list, event }: DeleteListFormProps) => {
     mode: "onChange",
     resolver: yupResolver(deleteEventListSchema(list.title)),
   });
-  const editUserEventMutation = useEditEvent("eventInfo");
+  const deleteListMutation = useDeleteEventList();
   const handleCloseModal = () => dispatch(closeModal());
 
-  const convertRequestData = () => {
-    const editedEvent = { ...event };
-    editedEvent.lists = editedEvent.lists.filter(
-      (filterList: IEventList) => filterList._id !== list._id,
-    );
-
-    return editedEvent;
-  };
-
-  const onSubmit = ({ title }: { title: string }) => {
+  const onSubmit = () => {
     try {
-      const editedEvent = convertRequestData(title);
-      editUserEventMutation.mutate({
+      deleteListMutation.mutate({
         eventId: event._id,
-        data: editedEvent,
+        listId: list._id,
       });
       navigate(`/events/${event._id}`, {
         state: {

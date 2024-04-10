@@ -21,16 +21,16 @@ import React, { useState } from "react";
 import { useEditEvent } from "../../query/mutations";
 import { useSelector } from "react-redux";
 import { selectEvent } from "../../../../core/slices/event/eventSelect";
-import { EventList } from "./EventList";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useAppDispatch } from "../../../../utils/hooks/useAppDispatch";
 import { openModal } from "../../../../core/slices/modal/modalSlice";
 import { ModalId } from "../../../modal/types";
 import { AddListModal } from "./add-list/AddListModal";
+import { useNavigate } from "react-router-dom";
 
-export const EventLists = ({ stateSelectedList }) => {
+export const EventLists = () => {
   const dispatch = useAppDispatch();
-  const [selectedList, setSelectedList] = useState(null);
+  const navigate = useNavigate();
   const event: IEvent = useSelector(selectEvent);
   const cardStyles = {
     width: 250,
@@ -67,11 +67,17 @@ export const EventLists = ({ stateSelectedList }) => {
     { title: "Вещи", iconName: "InventoryIcon", items: [], completed: 0 },
   ];
 
-  const getCheckedItemsPercentages = (list: IEventList): number => {
+  const getCheckedItemsPercentagesOrQuantity = (
+    list: IEventList,
+    percents = true,
+  ): number => {
     let checkedItemsQuantity = 0;
     list.items.forEach((item: IEventListItem) => {
       if (item.checked) checkedItemsQuantity++;
     });
+    if (!percents) {
+      return checkedItemsQuantity;
+    }
     return checkedItemsQuantity
       ? Number(((checkedItemsQuantity / list.items.length) * 100).toFixed(0))
       : 0;
@@ -98,15 +104,6 @@ export const EventLists = ({ stateSelectedList }) => {
       });
     }
   };
-
-  if (selectedList || stateSelectedList) {
-    return (
-      <EventList
-        list={selectedList ?? stateSelectedList}
-        setSelectedList={setSelectedList}
-      />
-    );
-  }
 
   if (!event?.lists.length) {
     return (
@@ -162,7 +159,9 @@ export const EventLists = ({ stateSelectedList }) => {
         <Card
           key={list._id}
           sx={cardStyles}
-          onClick={() => setSelectedList(list)}
+          onClick={() => {
+            navigate(`lists/${list._id}`);
+          }}
         >
           <CardContent>
             <Typography variant="h5">
@@ -180,7 +179,7 @@ export const EventLists = ({ stateSelectedList }) => {
             >
               <CircularProgress
                 variant="determinate"
-                value={getCheckedItemsPercentages(list)}
+                value={getCheckedItemsPercentagesOrQuantity(list)}
                 size={120}
               />
               <Box
@@ -199,7 +198,9 @@ export const EventLists = ({ stateSelectedList }) => {
                   variant="caption"
                   component="div"
                   color="text.secondary"
-                >{`${getCheckedItemsPercentages(list)}%`}</Typography>
+                >{`${getCheckedItemsPercentagesOrQuantity(list, false)}/${
+                  list.items.length
+                }`}</Typography>
               </Box>
             </Box>
           </CardContent>

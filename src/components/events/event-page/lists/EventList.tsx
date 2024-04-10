@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAppDispatch } from "../../../../utils/hooks/useAppDispatch";
 import { IEventList, IEventListItem } from "../../../../core/models/events";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Checkbox,
@@ -38,13 +38,15 @@ import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import { EditListModal } from "./edit-list/EditListModal";
 import { DeleteListModal } from "./delete-list/DeleteListModal";
+import { useList } from "../../query/queries";
+import Loading from "../../../system/Loading";
 
-export const EventList = ({ list, setSelectedList }) => {
-  const [selectedItem, setSelectedItem] = useState<IEventListItem | null>(null);
-  const [localList, setLocalList] = useState<IEventList | null>(list);
+export const EventList = () => {
+  const { eventId, listId } = useParams();
+  const event = useSelector(selectEvent);
+  const { isLoading, data } = useList(eventId, listId);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const event = useSelector(selectEvent);
   const editUserEventMutation = useEditEventWithoutUpdate();
 
   const actions = [
@@ -99,15 +101,13 @@ export const EventList = ({ list, setSelectedList }) => {
 
   const handleToggle = (itemToCheck) => () => {
     const editedList: IEventList = {
-      ...localList,
+      ...data,
       items: [
         { ...itemToCheck, checked: !itemToCheck.checked },
-        ...localList?.items.filter((item) => item._id !== itemToCheck._id),
+        ...data?.items.filter((item) => item._id !== itemToCheck._id),
       ],
     };
     editedList.items = sortItems(editedList.items);
-
-    setLocalList(editedList);
 
     const editedEvent = {
       ...event,
@@ -127,8 +127,8 @@ export const EventList = ({ list, setSelectedList }) => {
 
   const handleItemDelete = (itemId: string) => {
     const editedList: IEventList = {
-      ...list,
-      items: list.items.filter((item) => item._id !== itemId),
+      ...data,
+      items: data.items.filter((item) => item._id !== itemId),
     };
     const editedEvent = {
       ...event,
@@ -166,6 +166,10 @@ export const EventList = ({ list, setSelectedList }) => {
     );
   };
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Stack direction="row" spacing={2}>
@@ -183,7 +187,7 @@ export const EventList = ({ list, setSelectedList }) => {
             <ArrowBackIcon />
           </IconButton>
         </Tooltip>
-        <Typography variant="h3">{list.title}</Typography>
+        <Typography variant="h3">{data.title}</Typography>
         <Box sx={{ position: "relative" }}>
           <StyledSpeedDial
             ariaLabel="SpeedDial playground example"
@@ -199,16 +203,12 @@ export const EventList = ({ list, setSelectedList }) => {
             ))}
           </StyledSpeedDial>
         </Box>
-        <EditListModal list={localList} event={event} />
-        <DeleteListModal list={localList} event={event} />
-        <AddItemModal
-          event={event}
-          list={localList}
-          setSelectedList={setSelectedList}
-        />
+        <EditListModal list={data} event={event} />
+        <DeleteListModal list={data} event={event} />
+        <AddItemModal event={event} list={data} />
       </Stack>
       <List
-        key={localList?._id}
+        key={data?._id}
         sx={{
           width: "100%",
           maxWidth: 550,
@@ -217,7 +217,7 @@ export const EventList = ({ list, setSelectedList }) => {
           overflow: "auto",
         }}
       >
-        {localList?.items?.map((item: IEventListItem) => {
+        {data?.items?.map((item: IEventListItem) => {
           const labelId = `checkbox-list-label-${item._id}`;
 
           return (
@@ -241,7 +241,6 @@ export const EventList = ({ list, setSelectedList }) => {
                     aria-label="delete"
                     sx={{ marginLeft: 2 }}
                     onClick={() => {
-                      setSelectedItem(item);
                       dispatch(openModal(ModalId.EditItemEventList));
                     }}
                   >
@@ -275,12 +274,7 @@ export const EventList = ({ list, setSelectedList }) => {
                 </ListItemIcon>
                 <ListItemText id={labelId} primary={`${item.title}`} />
               </ListItemButton>
-              <EditItemModal
-                event={event}
-                list={localList}
-                item={selectedItem}
-                setSelectedList={setSelectedList}
-              />
+              <EditItemModal event={event} list={data} />
             </ListItem>
           );
         })}

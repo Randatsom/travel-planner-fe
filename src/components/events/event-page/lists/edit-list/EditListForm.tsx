@@ -10,8 +10,7 @@ import { useAppDispatch } from "../../../../../utils/hooks/useAppDispatch";
 import { addNotification } from "../../../../../core/slices/notification/notificationSlice";
 import { NotificationStatus } from "../../../../../core/slices/notification/types";
 import { handleError } from "../../../../../utils/errors";
-import { useEditEvent } from "../../../query/mutations";
-import { useNavigate } from "react-router-dom";
+import { useUpdateEventList } from "../../../query/mutations";
 
 type EditListFormProps = {
   list: IEventList;
@@ -20,7 +19,6 @@ type EditListFormProps = {
 
 export const EditListForm = ({ list, event }: EditListFormProps) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { control, handleSubmit, formState } = useForm({
     mode: "onChange",
     resolver: yupResolver(addNewListSchema),
@@ -28,40 +26,25 @@ export const EditListForm = ({ list, event }: EditListFormProps) => {
       title: list.title,
     },
   });
-  const editUserEventMutation = useEditEvent("eventInfo");
+  const editListMutation = useUpdateEventList();
   const handleCloseModal = () => dispatch(closeModal());
 
   const convertRequestData = (title: string) => {
-    let foundList = {
-      ...event.lists.find(
-        (foundList: IEventList) => foundList._id === list._id,
-      ),
-    };
-    foundList.title = title;
+    const listToEdit = { ...list };
+    listToEdit.title = title;
 
-    const editedEvent = { ...event };
-    editedEvent.lists = editedEvent.lists.filter(
-      (filterList: IEventList) => filterList._id !== list._id,
-    );
-    editedEvent.lists = [foundList, ...editedEvent.lists];
-
-    return editedEvent;
+    return listToEdit;
   };
 
   const onSubmit = ({ title }: { title: string }) => {
     try {
-      const editedEvent = convertRequestData(title);
-      editUserEventMutation.mutate({
+      const editedList = convertRequestData(title);
+      editListMutation.mutate({
         eventId: event._id,
-        data: editedEvent,
+        listId: list._id,
+        data: editedList,
       });
       handleCloseModal();
-      navigate(`/events/${event._id}`, {
-        state: {
-          tabIndexToSelect: 1,
-          selectedList: editedEvent.lists[0],
-        },
-      });
       dispatch(
         addNotification({
           text: "Список обновлен!",

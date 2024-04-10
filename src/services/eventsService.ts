@@ -1,5 +1,5 @@
 import http from "./httpService";
-import { IEvent } from "../core/models/events";
+import { IEvent, IEventList } from "../core/models/events";
 
 class EventsService {
   getAllEvents() {
@@ -24,6 +24,18 @@ class EventsService {
 
   deleteEvent(eventId: string) {
     return http.delete(`/events/${eventId}`);
+  }
+
+  getListById(eventId: string, listId: string) {
+    return http.get(`/events/${eventId}/lists/${listId}`);
+  }
+
+  deleteListById(eventId: string, listId: string) {
+    return http.delete(`/events/${eventId}/lists/${listId}`);
+  }
+
+  updateListById(eventId: string, listId: string, data: IEventList) {
+    return http.patch(`/events/${eventId}/lists/${listId}`, data);
   }
 }
 

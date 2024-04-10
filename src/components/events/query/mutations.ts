@@ -56,3 +56,33 @@ export function useDeleteEvent() {
     },
   });
 }
+
+export function useDeleteEventList() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ eventId, listId }) =>
+      EventsService.deleteListById(eventId, listId),
+    onSettled: async (_, error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        await queryClient.invalidateQueries({ queryKey: ["eventInfo"] });
+      }
+    },
+  });
+}
+
+export function useUpdateEventList() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ eventId, listId, data }) =>
+      EventsService.updateListById(eventId, listId, data),
+    onSettled: async (_, error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        await queryClient.invalidateQueries({ queryKey: ["listInfo"] });
+      }
+    },
+  });
+}
