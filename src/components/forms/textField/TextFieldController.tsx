@@ -18,7 +18,7 @@ const TextFieldController = <TFieldValues extends FieldValues>({
         event.target.blur();
       }
     },
-    [],
+    []
   );
   const handleKeyPress: React.KeyboardEventHandler<HTMLInputElement> =
     useCallback(
@@ -27,7 +27,7 @@ const TextFieldController = <TFieldValues extends FieldValues>({
           event.preventDefault();
         }
       },
-      [numericOnly],
+      [numericOnly]
     );
 
   return (
@@ -45,6 +45,7 @@ const TextFieldController = <TFieldValues extends FieldValues>({
           helperText={fieldState.error?.message ?? helperText}
           inputProps={{ readOnly, autoComplete: "off" }}
           multiline={multiline}
+          sx={{ flexGrow: 1, width: "100%" }}
         />
       )}
     />

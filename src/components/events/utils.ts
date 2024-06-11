@@ -2,8 +2,8 @@ import { UserType } from "../../core/slices/auth/types";
 import { IEventListItem } from "../../core/models/events";
 
 export const attendeesSelectOptionsWithoutCurrentUser = (
-  allUsers: UserType[],
-  currentUserId: string,
+  allUsers: UserType[] | undefined,
+  currentUserId: string
 ) => {
   return (
     allUsers

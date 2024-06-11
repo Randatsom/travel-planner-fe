@@ -7,7 +7,7 @@ import { IEvent } from "../core/models/events";
 import ActiveEvents from "../components/events/user-events/ActiveEvents";
 import CustomTabs from "../components/tabs/CustomTabs";
 import CompletedEvents from "../components/events/user-events/CompletedEvents";
-import CreateEventForm from "../components/events/user-events/CreateEventForm";
+import CreateEventForm from "../core/components/create-event/CreateEventForm";
 import { useAppDispatch } from "../utils/hooks/useAppDispatch";
 import { updateParticipantEvents } from "../core/slices/participantEvents/participantEventsSlice";
 
